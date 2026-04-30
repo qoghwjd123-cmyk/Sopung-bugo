@@ -433,7 +433,7 @@
         </div>
         <div class="form-group">
           <label>별세일 <span class="req">*</span></label>
-          <input type="date" id="deceasedDate" onchange="calcAge()" style="width:100%;padding:10px 14px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-family:'Noto Sans KR',sans-serif;color:var(--ink);outline:none;-webkit-appearance:none;border-radius:0;">
+          <input type="date" id="deceasedDate" onchange="calcAge()" onclick="this.showPicker && this.showPicker()" style="width:100%;padding:10px 14px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-family:'Noto Sans KR',sans-serif;color:var(--ink);outline:none;-webkit-appearance:none;border-radius:0;cursor:pointer;">
         </div>
       </div>
       <div class="form-row">
@@ -503,7 +503,7 @@
       <div class="form-row">
         <div class="form-group">
           <label>발인일시 <span class="req">*</span></label>
-          <input type="date" id="funeralDate"  style="width:100%;padding:10px 14px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-family:'Noto Sans KR',sans-serif;color:var(--ink);outline:none;-webkit-appearance:none;border-radius:0;">
+          <input type="date" id="funeralDate" onclick="this.showPicker && this.showPicker()" style="width:100%;padding:10px 14px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-family:'Noto Sans KR',sans-serif;color:var(--ink);outline:none;-webkit-appearance:none;border-radius:0;cursor:pointer;">
         </div>
       </div>
       <div class="form-row">
@@ -544,10 +544,10 @@
         <div style="font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:12px;font-family:'Noto Serif KR',serif;">조의금 기록장 비밀번호</div>
         <p style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6;">분실에 대비해 상주님의 휴대폰 뒷자리를 입력해주세요.</p>
         <div style="margin-bottom:10px;">
-          <input type="password" id="adminPassword" placeholder="휴대폰 뒷 4자리" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="width:100%;padding:10px 14px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;">
+          <input type="text" inputmode="numeric" id="adminPassword" placeholder="휴대폰 뒷 4자리" maxlength="4" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="width:100%;padding:10px 14px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;-webkit-text-security:disc;">
         </div>
         <div>
-          <input type="password" id="adminPasswordConfirm" placeholder="한 번 더 입력" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="width:100%;padding:10px 14px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;">
+          <input type="text" inputmode="numeric" id="adminPasswordConfirm" placeholder="한 번 더 입력" maxlength="4" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="width:100%;padding:10px 14px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;-webkit-text-security:disc;">
         </div>
       </div>
 
@@ -579,20 +579,28 @@
           <div id="prev-name" style="font-family:'Noto Serif KR',serif; font-size:22px; font-weight:600; color:var(--accent); letter-spacing:3px; margin-bottom:6px;"></div>
           <div id="prev-info" style="font-size:12px; color:var(--muted); letter-spacing:1px;"></div>
         </div>
-        <div style="margin-bottom:20px;">
+        <!-- 장례식장 -->
+        <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--line);">
           <div style="font-size:10px; letter-spacing:3px; color:var(--gold); font-family:'Noto Serif KR',serif; margin-bottom:10px;">장 례 식 장</div>
           <div id="prev-hall" style="font-size:14px; color:var(--accent); font-family:'Noto Serif KR',serif; margin-bottom:4px;"></div>
           <div id="prev-address" style="font-size:12px; color:var(--muted);"></div>
           <div id="prev-funeral-date" style="font-size:13px; color:var(--accent); margin-top:8px;"></div>
           <div id="prev-burial" style="font-size:12px; color:var(--muted); margin-top:4px;"></div>
         </div>
-        <div style="margin-bottom:20px; padding-top:20px; border-top:1px solid var(--line);">
+        <!-- 상주 -->
+        <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--line);">
           <div style="font-size:10px; letter-spacing:3px; color:var(--gold); font-family:'Noto Serif KR',serif; margin-bottom:10px;">상 주</div>
           <div id="prev-sangju" style="font-size:13px; color:var(--accent); line-height:2;"></div>
         </div>
-        <div id="prev-account-section" style="padding-top:20px; border-top:1px solid var(--line); display:none;">
+        <!-- 마음전하실곳 -->
+        <div id="prev-account-section" style="padding-bottom:20px; border-bottom:1px solid var(--line); margin-bottom:20px; display:none;">
           <div style="font-size:10px; letter-spacing:3px; color:var(--gold); font-family:'Noto Serif KR',serif; margin-bottom:10px;">마 음 전 하 실 곳</div>
           <div id="prev-accounts" style="font-size:13px; color:var(--accent); line-height:2;"></div>
+        </div>
+        <!-- 생전 사진 -->
+        <div id="prev-photo-section" style="display:none;">
+          <div style="font-size:10px; letter-spacing:3px; color:var(--gold); font-family:'Noto Serif KR',serif; margin-bottom:10px;">생 전 사 진</div>
+          <div id="prev-photo-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:4px;"></div>
         </div>
       </div>
     </div>
@@ -863,6 +871,10 @@ window.removeAccount = function removeAccount(n) {
 
 // ── 옵션 토글 ──
 window.toggleOpt = function toggleOpt(key) {
+  if (key === 'flower') {
+    showToast('화환 보내기 서비스를 준비 중입니다 🌸');
+    return;
+  }
   opts[key] = !opts[key];
   document.getElementById('opt-' + key).classList.toggle('active', opts[key]);
   if (key === 'record') {
@@ -975,6 +987,22 @@ window.renderPreview = function renderPreview() {
   document.getElementById('prev-sangju').innerHTML = sanguHtml || '—';
   document.getElementById('prev-accounts').innerHTML = accountHtml;
   document.getElementById('prev-account-section').style.display = hasAccount ? 'block' : 'none';
+
+  // 미리보기 - 사진
+  const photoSection = document.getElementById('prev-photo-section');
+  const photoGrid = document.getElementById('prev-photo-grid');
+  if (selectedPhotos.length > 0) {
+    photoSection.style.display = 'block';
+    photoGrid.innerHTML = '';
+    selectedPhotos.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.style.cssText = 'aspect-ratio:1; overflow:hidden; background:#2a2620;';
+      div.innerHTML = `<img src="${p.previewUrl}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+      photoGrid.appendChild(div);
+    });
+  } else {
+    photoSection.style.display = 'none';
+  }
 }
 
 window.copyUrl = function copyUrl(elId) {
