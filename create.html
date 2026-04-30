@@ -337,7 +337,6 @@
     transition: all 0.2s; position: relative; margin-bottom: 16px;
   }
   .photo-upload-area:hover { border-color: var(--gold); background: #fdf8f0; }
-  .photo-upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .photo-upload-icon { font-size: 32px; margin-bottom: 10px; }
   .photo-upload-title { font-family: 'Noto Serif KR', serif; font-size: 15px; color: var(--accent); letter-spacing: 1px; margin-bottom: 6px; }
   .photo-upload-sub { font-size: 12px; color: var(--muted); line-height: 1.7; }
@@ -449,8 +448,8 @@
     <div class="form-section">
       <div class="form-section-title">생전 사진 <span style="font-size:10px;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-weight:400;letter-spacing:0;">(선택 · 최대 9장)</span></div>
 
-      <div class="photo-upload-area" id="photoDropArea" onclick="document.getElementById('photoFileInput').click()">
-        <input type="file" id="photoFileInput" accept="image/*" multiple style="display:none" onchange="handlePhotoSelect(event)">
+      <div class="photo-upload-area" id="photoDropArea" onclick="triggerPhotoInput()">
+        <input type="file" id="photoFileInput" accept="image/*" multiple style="display:none;" onchange="handlePhotoSelect(event)">
         <div class="photo-upload-icon">📷</div>
         <div class="photo-upload-title">고인의 생전 사진을 올려주세요</div>
         <div class="photo-upload-sub">
@@ -1060,11 +1059,17 @@ document.querySelectorAll('.date-wrap').forEach(wrap => {
 });
 
 // ── 사진 선택 ──
+window.triggerPhotoInput = function() {
+  document.getElementById('photoFileInput').click();
+};
+
 window.handlePhotoSelect = async function(e) {
   const files = Array.from(e.target.files);
+  if (!files.length) return;
   const remaining = MAX_PHOTOS - selectedPhotos.length;
-  if (remaining <= 0) { showToast('사진은 최대 9장까지 추가할 수 있어요'); return; }
+  if (remaining <= 0) { showToast('사진은 최대 9장까지 추가할 수 있어요'); e.target.value = ''; return; }
   const toAdd = files.slice(0, remaining);
+  if (files.length > remaining) showToast((files.length - remaining) + '장은 초과로 제외됐어요');
 
   for (const file of toAdd) {
     const compressed = await compressImage(file, 1200, 0.82);
@@ -1098,6 +1103,7 @@ async function compressImage(file, maxSize, quality) {
 function renderPhotoGrid() {
   const grid = document.getElementById('photoGrid');
   const countEl = document.getElementById('photoCount');
+  const dropArea = document.getElementById('photoDropArea');
   grid.innerHTML = '';
   selectedPhotos.forEach((p, i) => {
     const div = document.createElement('div');
@@ -1106,16 +1112,15 @@ function renderPhotoGrid() {
       <button class="photo-thumb-remove" onclick="removePhoto(${i})">✕</button>`;
     grid.appendChild(div);
   });
-  if (selectedPhotos.length > 0) {
+  const count = selectedPhotos.length;
+  if (count > 0) {
     countEl.style.display = 'block';
-    countEl.textContent = selectedPhotos.length + ' / ' + MAX_PHOTOS + '장';
-    document.getElementById('photoDropArea').style.display = selectedPhotos.length >= MAX_PHOTOS ? 'none' : 'flex';
-    document.getElementById('photoDropArea').style.flexDirection = 'column';
-    document.getElementById('photoDropArea').style.alignItems = 'center';
+    countEl.textContent = count + ' / ' + MAX_PHOTOS + '장';
   } else {
     countEl.style.display = 'none';
-    document.getElementById('photoDropArea').style.display = 'block';
   }
+  // 9장 꽉 차면 업로드 영역 숨기기
+  dropArea.style.display = count >= MAX_PHOTOS ? 'none' : 'block';
 }
 
 window.removePhoto = function(i) {
