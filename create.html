@@ -1066,18 +1066,38 @@ window.triggerPhotoInput = function() {
 window.handlePhotoSelect = async function(e) {
   const files = Array.from(e.target.files);
   if (!files.length) return;
+
   const remaining = MAX_PHOTOS - selectedPhotos.length;
   if (remaining <= 0) { showToast('사진은 최대 9장까지 추가할 수 있어요'); e.target.value = ''; return; }
   const toAdd = files.slice(0, remaining);
   if (files.length > remaining) showToast((files.length - remaining) + '장은 초과로 제외됐어요');
 
-  for (const file of toAdd) {
-    const compressed = await compressImage(file, 1200, 0.82);
-    const previewUrl = URL.createObjectURL(compressed);
-    selectedPhotos.push({ file: compressed, previewUrl, name: file.name });
+  // 로딩 표시
+  const dropArea = document.getElementById('photoDropArea');
+  dropArea.style.opacity = '0.5';
+  dropArea.style.pointerEvents = 'none';
+  showToast('사진 처리 중...');
+
+  try {
+    for (const file of toAdd) {
+      // 파일이 이미 작으면 압축 스킵
+      let finalFile = file;
+      if (file.size > 500 * 1024) {
+        finalFile = await compressImage(file, 1200, 0.82);
+      }
+      const previewUrl = URL.createObjectURL(finalFile);
+      selectedPhotos.push({ file: finalFile, previewUrl, name: file.name });
+    }
+    renderPhotoGrid();
+    showToast(toAdd.length + '장 추가됐어요');
+  } catch(err) {
+    console.error(err);
+    showToast('사진 처리 중 오류가 발생했어요');
+  } finally {
+    dropArea.style.opacity = '1';
+    dropArea.style.pointerEvents = 'auto';
+    e.target.value = '';
   }
-  renderPhotoGrid();
-  e.target.value = '';
 };
 
 async function compressImage(file, maxSize, quality) {
