@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>조의금 기록장 만들기 — 소풍부고</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1814; --paper: #f5f0e8; --cream: #ede8dc;
+    --muted: #8a8478; --accent: #4a4035; --gold: #b89a5a;
+    --line: #d4cfc6; --white: #fdfbf7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; }
+  input, select, textarea { font-size: 16px !important; }
+
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;
+    background: rgba(245,240,232,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .logo { font-family: 'Noto Serif KR', serif; font-size: 16px; font-weight: 600; color: var(--accent); letter-spacing: 3px; text-decoration: none; }
+  .logo span { color: var(--gold); }
+
+  .back-bar {
+    position: fixed; top: 53px; left: 0; right: 0; z-index: 99;
+    background: var(--paper);
+  }
+  .back-bar a { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; font-size: 13px; color: var(--accent); text-decoration: none; letter-spacing: 1px; font-weight: 500; }
+
+  .container { max-width: 480px; margin: 0 auto; padding: 120px 20px 60px; }
+
+  .page-title { font-family: 'Noto Serif KR', serif; font-size: 22px; color: var(--accent); letter-spacing: 2px; margin-bottom: 6px; }
+  .page-sub { font-size: 13px; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.6; }
+
+  .form-box { background: var(--white); border: 1px solid var(--line); padding: 28px; margin-bottom: 20px; }
+  .form-row { margin-bottom: 20px; }
+  .form-row label { display: block; font-size: 11px; letter-spacing: 2px; color: var(--muted); margin-bottom: 8px; }
+  .form-row input {
+    width: 100%; padding: 12px 14px;
+    border: 1px solid var(--line); background: var(--paper);
+    font-family: 'Noto Sans KR', sans-serif; color: var(--ink); outline: none;
+  }
+  .form-row input:focus { border-color: var(--gold); background: var(--white); }
+  .form-hint { font-size:11px; color:var(--muted); margin-top:6px; letter-spacing:0.5px; line-height:1.6; }
+
+  .submit-btn {
+    width: 100%; padding: 16px;
+    background: var(--accent); color: var(--white);
+    border: none; font-size: 13px; letter-spacing: 3px;
+    cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
+    margin-bottom: 24px;
+  }
+  .submit-btn:hover { background: var(--gold); }
+
+  /* 안내사항 */
+  .notice-box { background: var(--cream); border: 1px solid var(--line); padding: 20px; }
+  .notice-title { font-size: 11px; letter-spacing: 3px; color: var(--gold); margin-bottom: 14px; font-family: 'Noto Serif KR', serif; }
+  .notice-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+  .notice-item:last-child { margin-bottom: 0; }
+  .notice-num {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--line); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px; font-size: 10px; color: var(--muted);
+  }
+  .notice-item p { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.7; }
+
+  /* 완성 화면 */
+  .result-box { display: none; background: var(--white); border: 1px solid var(--line); padding: 28px; margin-bottom: 20px; }
+  .result-title { font-family: 'Noto Serif KR', serif; font-size: 16px; color: var(--accent); letter-spacing: 2px; margin-bottom: 16px; }
+  .result-url { font-size: 11px; color: var(--muted); word-break: break-all; padding: 12px 14px; background: var(--cream); border: 1px solid var(--line); margin-bottom: 14px; line-height: 1.6; }
+  .result-btns { display: flex; gap: 8px; }
+  .result-btns button {
+    flex: 1; padding: 12px; font-size: 12px; letter-spacing: 1px;
+    cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
+  }
+  .btn-copy { background: var(--accent); color: var(--white); border: none; }
+  .btn-go { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+  .toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--accent); color: var(--white);
+    padding: 12px 24px; font-size: 13px; letter-spacing: 1px;
+    opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">소풍<span>부고</span></a>
+</header>
+
+<div class="back-bar">
+  <a href="/">← 홈으로</a>
+</div>
+
+<div class="container">
+
+  <div class="page-title">조의금 기록장 만들기</div>
+  <p class="page-sub">부고장 없이 조의금 기록장만 만들 수 있어요.</p>
+
+  <!-- 입력 폼 -->
+  <div class="form-box" id="formBox">
+    <div class="form-row">
+      <label>고인 성함 <span style="color:#c0392b;">*</span></label>
+      <input type="text" id="deceaseeName" placeholder="홍길동" maxlength="20">
+    </div>
+    <div class="form-row">
+      <label>비밀번호 <span style="color:#c0392b;">*</span></label>
+      <input type="password" id="pw" placeholder="휴대폰 뒷 4자리" maxlength="4" inputmode="numeric" autocomplete="off" pattern="[0-9]*">
+      <div class="form-hint">분실에 대비해 상주님의 휴대폰 뒷자리를 입력해주세요.</div>
+    </div>
+    <div class="form-row">
+      <label>비밀번호 확인 <span style="color:#c0392b;">*</span></label>
+      <input type="password" id="pwConfirm" placeholder="한 번 더 입력" maxlength="4" inputmode="numeric" autocomplete="off" pattern="[0-9]*">
+    </div>
+    <button class="submit-btn" onclick="createCondolence()">조의금 기록장 만들기</button>
+  </div>
+
+  <!-- 완성 결과 -->
+  <div class="result-box" id="resultBox">
+    <div class="result-title">조의금 기록장이 만들어졌습니다</div>
+    <div class="result-url" id="resultUrl"></div>
+    <div class="result-btns">
+      <button class="btn-copy" onclick="copyUrl()">📋 링크 복사</button>
+      <button class="btn-go" onclick="goCondolence()">바로가기 →</button>
+    </div>
+  </div>
+
+  <!-- 안내사항 -->
+  <div class="notice-box">
+    <div class="notice-title">조의금 기록장 안내</div>
+    <div class="notice-item">
+      <div class="notice-num">1</div>
+      <p>조의대에 계신 분께 이 링크를 공유해 주세요. 해당 링크로만 접속 가능합니다.</p>
+    </div>
+    <div class="notice-item">
+      <div class="notice-num">2</div>
+      <p>조의금 기록은 누구나 가능합니다. 금액은 나중에 수정할 수 있습니다.</p>
+    </div>
+    <div class="notice-item">
+      <div class="notice-num">3</div>
+      <p>조의금 기록 삭제는 상주님의 비밀번호(휴대폰 뒷 4자리)로 🔑 로그인 후 가능합니다.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB1wl0aW7EY2QFGdcjhMOBl66g96C_Bflg",
+  authDomain: "sopungbugo.firebaseapp.com",
+  projectId: "sopungbugo",
+  storageBucket: "sopungbugo.firebasestorage.app",
+  messagingSenderId: "726872101146",
+  appId: "1:726872101146:web:cbd7fcc97007c35e611ca3"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let _condoId = '';
+
+window.createCondolence = async function() {
+  const name = document.getElementById('deceaseeName').value.trim();
+  const pw = document.getElementById('pw').value;
+  const pwConfirm = document.getElementById('pwConfirm').value;
+
+  if (!name) { showToast('고인 성함을 입력해주세요'); return; }
+  if (!pw || pw.length !== 4 || isNaN(pw)) { showToast('휴대폰 뒷 4자리를 입력해주세요'); return; }
+  if (pw !== pwConfirm) { showToast('비밀번호가 일치하지 않습니다'); return; }
+
+  const condoId = 'condo_' + Math.random().toString(36).substr(2, 8);
+  _condoId = condoId;
+
+  try {
+    await setDoc(doc(db, 'bugos', condoId), {
+      id: condoId,
+      password: pw,
+      deceased: { name },
+      createdAt: new Date().toISOString(),
+      type: 'condolence_only'
+    });
+
+    const url = 'https://sopungbugo.com/condolence.html?id=' + condoId;
+    document.getElementById('resultUrl').textContent = url;
+    document.getElementById('formBox').style.display = 'none';
+    document.getElementById('resultBox').style.display = 'block';
+    showToast('조의금 기록장이 만들어졌습니다');
+  } catch(e) {
+    console.error(e);
+    showToast('오류가 발생했습니다. 다시 시도해주세요');
+  }
+};
+
+window.copyUrl = function() {
+  const url = document.getElementById('resultUrl').textContent;
+  navigator.clipboard.writeText(url).then(() => showToast('링크가 복사되었습니다'));
+};
+
+window.goCondolence = function() {
+  window.location.href = '/condolence.html?id=' + _condoId;
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>

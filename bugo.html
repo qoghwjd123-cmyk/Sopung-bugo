@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>소풍부고 — 부고장</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1814;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --muted: #8a8478;
+    --accent: #4a4035;
+    --gold: #b89a5a;
+    --line: #d4cfc6;
+    --white: #fdfbf7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(180,160,110,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(100,90,70,0.08) 0%, transparent 60%);
+  }
+
+  /* HEADER */
+  header {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid var(--line);
+    background: rgba(245,240,232,0.95);
+    backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-family: 'Noto Serif KR', serif; font-size: 14px; font-weight: 600; color: var(--accent); letter-spacing: 3px; text-decoration: none; }
+  .logo span { color: var(--gold); }
+
+  /* CONTAINER */
+  .container { max-width: 560px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* 부고 헤더 */
+  .bugo-header {
+    text-align: center;
+    padding: 48px 24px 40px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 0;
+  }
+  .bugo-tag {
+    display: inline-block;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 4px 16px;
+    margin-bottom: 24px;
+  }
+  .bugo-line {
+    width: 1px; height: 32px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    margin: 0 auto 24px;
+  }
+  .bugo-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(26px, 6vw, 36px);
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+  }
+  .bugo-info {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    line-height: 1.8;
+  }
+
+  /* 섹션 */
+  .bugo-section {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .bugo-section:last-of-type { border-bottom: none; }
+  .section-label {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  /* 장례식장 */
+  .funeral-hall {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .funeral-address {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
+  .funeral-dates { display: flex; flex-direction: column; gap: 8px; }
+  .funeral-date-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+  }
+  .date-label {
+    font-family: 'Noto Serif KR', serif;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 1px;
+    min-width: 32px;
+  }
+  .date-value { color: var(--accent); font-weight: 500; }
+  .date-badge {
+    background: var(--accent);
+    color: var(--paper);
+    font-size: 10px;
+    padding: 2px 8px;
+    letter-spacing: 1px;
+    font-family: 'Noto Serif KR', serif;
+  }
+
+  /* 상주 */
+  .sangju-list { display: flex; flex-direction: column; gap: 0; }
+  .sangju-item {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(212,207,198,0.4);
+  }
+  .sangju-item:last-child { border-bottom: none; }
+  .sangju-rel {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    min-width: 48px;
+    font-family: 'Noto Serif KR', serif;
+  }
+  .sangju-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  /* 계좌 */
+  .account-box {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+  .account-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .account-bank {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .account-num {
+    font-size: 15px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .btn-copy-account {
+    width: 100%;
+    padding: 8px;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-copy-account:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* 버튼들 */
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 32px;
+  }
+  .btn-flower {
+    width: 100%;
+    padding: 14px;
+    background: none;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+  }
+  .btn-flower:hover { background: var(--gold); color: var(--white); }
+  .btn-record {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    border: none;
+    color: var(--paper);
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+  }
+  .btn-record:hover { background: #2e2820; }
+
+  /* 푸터 */
+  .bugo-footer {
+    text-align: center;
+    padding: 32px 0 0;
+    margin-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+  .bugo-footer-logo {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .bugo-footer-logo span { color: var(--gold); }
+  .bugo-footer-tagline {
+    font-size: 11px;
+    color: var(--line);
+    letter-spacing: 0.5px;
+    font-family: 'Noto Serif KR', serif;
+    font-style: italic;
+  }
+
+  /* 발인됨 오버레이 */
+  .expired-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,24,20,0.85);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    backdrop-filter: blur(4px);
+  }
+  .expired-overlay.show { display: flex; }
+  .expired-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(20px, 5vw, 32px);
+    color: var(--paper);
+    letter-spacing: 4px;
+  }
+  .expired-sub {
+    font-size: 13px;
+    color: rgba(245,240,232,0.5);
+    letter-spacing: 1px;
+  }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--accent); color: var(--paper); padding: 12px 28px;
+    font-size: 13px; letter-spacing: 2px; font-family: 'Noto Serif KR', serif;
+    opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; white-space: nowrap;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px) {
+    .container { padding: 32px 16px 60px; }
+    .bugo-header { padding: 36px 16px 32px; }
+  }
+  #loadingOverlay {
+    position: fixed; inset: 0; background: #f5f0e8;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999; flex-direction: column; gap: 16px;
+  }
+  .loading-flower {
+    font-size: 36px; animation: spin 2s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .loading-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px; color: var(--muted); letter-spacing: 3px;
+  }
+
+  /* PHOTO SECTION */
+  .photo-section {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .photo-grid-view {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+  }
+  .photo-grid-view .p-item {
+    aspect-ratio: 1; overflow: hidden; cursor: pointer;
+    background: #2a2620;
+  }
+  .photo-grid-view .p-item:first-child {
+    grid-column: span 2; grid-row: span 2;
+  }
+  .photo-grid-view .p-item img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; transition: opacity 0.2s;
+  }
+  .photo-grid-view .p-item:hover img { opacity: 0.85; }
+
+  /* LIGHTBOX */
+  .lightbox {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.95); z-index: 1000;
+    align-items: center; justify-content: center;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox-img {
+    max-width: 92vw; max-height: 88vh;
+    object-fit: contain; display: block;
+  }
+  .lb-close {
+    position: absolute; top: 16px; right: 20px;
+    color: #fff; font-size: 28px; cursor: pointer;
+    background: none; border: none; line-height: 1; opacity: 0.8;
+  }
+  .lb-close:hover { opacity: 1; }
+  .lb-prev, .lb-next {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    color: #fff; font-size: 32px; cursor: pointer;
+    background: none; border: none; opacity: 0.7; padding: 12px;
+  }
+  .lb-prev:hover, .lb-next:hover { opacity: 1; }
+  .lb-prev { left: 8px; }
+  .lb-next { right: 8px; }
+  .lb-counter {
+    position: absolute; bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.6); font-size: 12px; letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+  <div class="loading-flower">✿</div>
+  <div class="loading-text">불러오는 중...</div>
+</div>
+<header>
+  <a href="/" class="logo">소풍<span>부고</span></a>
+</header>
+
+<div class="container">
+
+  <!-- 부고 헤더 -->
+  <div class="bugo-header">
+    <div class="bugo-tag">訃 告</div>
+    <div class="bugo-line"></div>
+    <div class="bugo-name" id="bugoName"></div>
+    <div class="bugo-info" id="bugoInfo"></div>
+  </div>
+
+  <!-- 생전 사진 -->
+  <div class="photo-section" id="photoSection" style="display:none;">
+    <span class="section-label">생 전 사 진</span>
+    <div class="photo-grid-view" id="photoGridView"></div>
+  </div>
+
+  <!-- 장례식장 -->
+  <div class="bugo-section">
+    <span class="section-label">장 례 식 장</span>
+    <div class="funeral-hall" id="funeralHall"></div>
+    <div class="funeral-address" id="funeralAddress"></div>
+    <div class="funeral-dates">
+      <div class="funeral-date-item" id="funeralDateRow">
+        <span class="date-label">발인</span>
+        <span class="date-value" id="funeralDate"></span>
+        <span class="date-badge" id="funeralBadge"></span>
+      </div>
+      <div class="funeral-date-item" id="burialRow" style="display:none;">
+        <span class="date-label">장지</span>
+        <span class="date-value" id="burialPlace"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 상주 -->
+  <div class="bugo-section">
+    <span class="section-label">상 주</span>
+<div class="sangju-list" id="sanguList"></div>
+  </div>
+
+  <!-- 계좌 -->
+  <div class="bugo-section" id="accountSection">
+    <span class="section-label">마 음 전 하 실 곳</span>
+<div id="accountList"></div>
+  </div>
+
+  <!-- 액션 버튼 -->
+  <div class="action-buttons" id="actionButtons">
+    <a href="#" class="btn-flower" id="flowerBtn">🌸 근조화환 보내기</a>
+    <a href="#" class="btn-record" id="recordBtn">📋 조의금 기록장</a>
+  </div>
+
+  <!-- 하단 고정 공유 버튼 -->
+  <div style="position:fixed;bottom:0;left:0;right:0;background:rgba(245,240,232,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:12px 20px;z-index:100;">
+    <button onclick="shareBugoKakao()" style="width:100%;padding:14px;background:#FEE500;color:#000;border:none;font-size:14px;font-weight:600;letter-spacing:1px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border-radius:4px;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" style="width:20px;height:20px;">
+      카카오톡으로 공유하기
+    </button>
+  </div>
+  <div style="height:80px;"></div>
+
+  <!-- 푸터 -->
+  <div class="bugo-footer">
+    <div class="bugo-footer-logo">소풍<span>부고</span></div>
+    <div class="bugo-footer-tagline">"긴 소풍 끝에 닿은 그곳에서는 부디 아픔없이 행복하세요"</div>
+  </div>
+
+</div>
+
+<!-- 라이트박스 -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <button class="lb-prev" onclick="lbMove(-1)">‹</button>
+  <img class="lightbox-img" id="lbImg" src="" alt="">
+  <button class="lb-next" onclick="lbMove(1)">›</button>
+  <div class="lb-counter" id="lbCounter"></div>
+</div>
+
+<!-- 발인 후 오버레이 -->
+<div class="expired-overlay" id="expiredOverlay">
+  <div class="expired-text">이미 발인된 부고입니다</div>
+  <div class="expired-sub">소중한 분의 명복을 빕니다</div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB1wl0aW7EY2QFGdcjhMOBl66g96C_Bflg",
+  authDomain: "sopungbugo.firebaseapp.com",
+  projectId: "sopungbugo",
+  storageBucket: "sopungbugo.firebasestorage.app",
+  messagingSenderId: "726872101146",
+  appId: "1:726872101146:web:cbd7fcc97007c35e611ca3"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// URL에서 부고 ID와 상주 인덱스 추출
+// 예: sopungbugo.com/bugo.html?id=abc123&s=1
+const params = new URLSearchParams(window.location.search);
+const bugoId = params.get('id');
+const sanguIdx = params.get('s') ? parseInt(params.get('s')) - 1 : null;
+
+async function loadBugo() {
+  if (!bugoId) {
+    // 샘플 데이터 유지
+    setFuneralBadge('2026-04-27');
+    checkExpired('2026-04-27');
+    return;
+  }
+
+  try {
+    const docSnap = await getDoc(doc(db, 'bugos', bugoId));
+    if (!docSnap.exists()) {
+      document.getElementById('bugoName').textContent = '부고장을 찾을 수 없습니다';
+      return;
+    }
+    const data = docSnap.data();
+    const d = data.deceased;
+    const f = data.funeral;
+    const sangju = data.sangju || [];
+
+    // 로딩 완료
+    document.getElementById('loadingOverlay').style.display = 'none';
+    // 고인 정보
+    document.getElementById('bugoName').textContent = '故 ' + d.name + ' 님';
+    let info = d.gender === '남' ? '남성' : '여성';
+    if (d.age) info += ' · 향년 ' + d.age + '세';
+    if (d.date) {
+      const [y,m,dd] = d.date.split('-');
+      info += ' · ' + y + '년 ' + parseInt(m) + '월 ' + parseInt(dd) + '일 별세';
+    }
+    if (d.title) info += ' · ' + d.title;
+    document.getElementById('bugoInfo').textContent = info;
+
+    // 장례식장
+    document.getElementById('funeralHall').textContent = f.hall;
+    if (f.address) document.getElementById('funeralAddress').textContent = f.address;
+    if (f.date) {
+      const [y,m,dd] = f.date.split('-');
+      document.getElementById('funeralDate').textContent = y + '년 ' + parseInt(m) + '월 ' + parseInt(dd) + '일';
+    }
+    if (f.burial) {
+      document.getElementById('burialRow').style.display = 'flex';
+      document.getElementById('burialPlace').textContent = f.burial;
+    }
+
+    // 상주 목록
+    const sanguList = document.getElementById('sanguList');
+    sanguList.innerHTML = '';
+    sangju.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'sangju-item';
+      div.innerHTML = `<span class="sangju-rel">${s.rel}</span><span class="sangju-name">${s.name}</span>`;
+      sanguList.appendChild(div);
+    });
+
+    // 계좌 - 상주 인덱스가 있으면 해당 상주만, 없으면 전체
+    const accountList = document.getElementById('accountList');
+    accountList.innerHTML = '';
+    const targets = sanguIdx !== null ? [sangju[sanguIdx]] : sangju;
+    let hasAccount = false;
+    targets.filter(s => s && s.account).forEach(s => {
+      hasAccount = true;
+      const div = document.createElement('div');
+      div.className = 'account-box';
+      div.innerHTML = `
+        <div class="account-name">${s.name}</div>
+        <div class="account-bank">${s.bank}</div>
+        <div class="account-num">${s.account}</div>
+        <button class="btn-copy-account" onclick="copyAccount('${s.bank} ${s.account} ${s.name}')">계좌번호 복사</button>
+      `;
+      accountList.appendChild(div);
+    });
+    if (!hasAccount) document.getElementById('accountSection').style.display = 'none';
+
+    // 사진
+    if (data.photos && data.photos.length > 0) {
+      const photoSection = document.getElementById('photoSection');
+      const grid = document.getElementById('photoGridView');
+      photoSection.style.display = 'block';
+      window._photos = data.photos;
+      data.photos.forEach((url, i) => {
+        const div = document.createElement('div');
+        div.className = 'p-item';
+        div.innerHTML = `<img src="${url}" alt="생전 사진 ${i+1}" loading="lazy">`;
+        div.onclick = () => openLightbox(i);
+        grid.appendChild(div);
+      });
+    }
+
+    // 옵션
+    if (!data.options?.flower) document.getElementById('flowerBtn').style.display = 'none';
+    if (!data.options?.record) document.getElementById('recordBtn').style.display = 'none';
+    if (data.options?.record) {
+      document.getElementById('recordBtn').href = `/condolence.html?id=${bugoId}`;
+    }
+
+    // 발인 체크
+    checkExpired(f.date);
+    setFuneralBadge(f.date);
+
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+function checkExpired(dateStr) {
+  if (!dateStr) return;
+  const funeralDate = new Date(dateStr);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  if (today > funeralDate) {
+    document.getElementById('expiredOverlay').classList.add('show');
+  }
+}
+
+function setFuneralBadge(dateStr) {
+  if (!dateStr) return;
+  const funeralDate = new Date(dateStr);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const diff = Math.ceil((funeralDate - today) / (1000*60*60*24));
+  const badge = document.getElementById('funeralBadge');
+  if (diff === 0) badge.textContent = '오늘';
+  else if (diff === 1) badge.textContent = '내일';
+  else if (diff > 1) badge.textContent = `D-${diff}`;
+  else badge.textContent = '발인완료';
+}
+
+window.copyAccount = function(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('계좌번호가 복사되었습니다'));
+}
+
+// 라이트박스
+let _lbIndex = 0;
+window.openLightbox = function(i) {
+  _lbIndex = i;
+  const photos = window._photos || [];
+  document.getElementById('lbImg').src = photos[i];
+  document.getElementById('lbCounter').textContent = (i+1) + ' / ' + photos.length;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+window.closeLightbox = function() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+};
+window.lbMove = function(dir) {
+  const photos = window._photos || [];
+  _lbIndex = (_lbIndex + dir + photos.length) % photos.length;
+  document.getElementById('lbImg').src = photos[_lbIndex];
+  document.getElementById('lbCounter').textContent = (_lbIndex+1) + ' / ' + photos.length;
+};
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowLeft') lbMove(-1);
+  if (e.key === 'ArrowRight') lbMove(1);
+  if (e.key === 'Escape') closeLightbox();
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+loadBugo();
+</script>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"></script>
+<script>
+function shareBugoKakao() {
+  if (typeof Kakao === "undefined") { alert("카카오 서비스를 불러오는 중입니다."); return; }
+  if (!Kakao.isInitialized()) Kakao.init("fe2f8b6fde7465e9c13653ce828083ec");
+  var url = window.location.href;
+  var name = document.getElementById("bugoName") ? document.getElementById("bugoName").textContent : "부고장";
+  Kakao.Share.sendDefault({
+    objectType: "feed",
+    content: {
+      title: name,
+      description: "직접 연락 드려야 하나 황망중이라 부고장으로 알려 드림을 헤아려 주시기 바랍니다.",
+      link: { mobileWebUrl: url, webUrl: url }
+    },
+    buttons: [{ title: "부고장 보기", link: { mobileWebUrl: url, webUrl: url } }]
+  });
+}
+</script>
+</body>
+</html>

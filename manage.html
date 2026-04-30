@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부고 관리 — 소풍부고</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1814; --paper: #f5f0e8; --cream: #ede8dc;
+    --muted: #8a8478; --accent: #4a4035; --gold: #b89a5a;
+    --line: #d4cfc6; --white: #fdfbf7; --error: #c0392b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  input, select, textarea { font-size: 16px !important; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; }
+
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;
+    background: rgba(245,240,232,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .logo { font-family: 'Noto Serif KR', serif; font-size: 16px; font-weight: 600; color: var(--accent); letter-spacing: 3px; text-decoration: none; }
+  .logo span { color: var(--gold); }
+
+  .container { max-width: 480px; margin: 0 auto; padding: 80px 20px 60px; }
+
+  /* 로딩 */
+  #loadingOverlay {
+    position: fixed; inset: 0; background: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999; flex-direction: column; gap: 16px;
+  }
+  .loading-flower { font-size: 36px; animation: spin 2s linear infinite; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  .loading-text { font-family: 'Noto Serif KR', serif; font-size: 13px; color: var(--muted); letter-spacing: 3px; }
+
+  /* 로그인 */
+  #loginBox {
+    background: var(--white); border: 1px solid var(--line); padding: 32px 24px; margin-top: 24px;
+  }
+  .login-title { font-family: 'Noto Serif KR', serif; font-size: 18px; color: var(--accent); letter-spacing: 2px; margin-bottom: 6px; }
+  .login-sub { font-size: 12px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+  .login-name { font-family: 'Noto Serif KR', serif; font-size: 14px; color: var(--gold); letter-spacing: 1px; margin-bottom: 20px; }
+
+  /* 섹션 카드 */
+  .section-card { background: var(--white); border: 1px solid var(--line); padding: 24px; margin-bottom: 16px; }
+  .section-card-title {
+    font-family: 'Noto Serif KR', serif; font-size: 13px; color: var(--accent);
+    letter-spacing: 2px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .section-badge { font-size: 10px; color: var(--gold); letter-spacing: 1px; font-family: 'Noto Sans KR', sans-serif; font-weight: 400; }
+
+  /* 공통 버튼 */
+  .btn-primary {
+    width: 100%; padding: 14px; background: var(--accent); color: var(--white);
+    border: none; font-size: 13px; letter-spacing: 3px; cursor: pointer;
+    font-family: 'Noto Serif KR', serif; transition: background 0.2s;
+  }
+  .btn-primary:hover { background: #2e2820; }
+  .btn-gold {
+    width: 100%; padding: 14px; background: var(--gold); color: var(--white);
+    border: none; font-size: 13px; letter-spacing: 2px; cursor: pointer;
+    font-family: 'Noto Serif KR', serif; transition: opacity 0.2s;
+  }
+  .btn-gold:hover { opacity: 0.85; }
+  .btn-outline {
+    width: 100%; padding: 12px; background: transparent; color: var(--accent);
+    border: 1px solid var(--accent); font-size: 12px; letter-spacing: 2px; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif; transition: all 0.2s;
+  }
+  .btn-outline:hover { background: var(--accent); color: var(--white); }
+  .btn-danger {
+    padding: 7px 14px; background: transparent; color: var(--error);
+    border: 1px solid var(--error); font-size: 11px; letter-spacing: 1px; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif; transition: all 0.2s;
+  }
+  .btn-danger:hover { background: var(--error); color: #fff; }
+
+  /* 사진 그리드 */
+  .manage-photo-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 16px;
+  }
+  .manage-photo-item {
+    aspect-ratio: 1; position: relative; overflow: hidden;
+    background: var(--cream); border: 1px solid var(--line);
+  }
+  .manage-photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .manage-photo-remove {
+    position: absolute; top: 4px; right: 4px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(192,57,43,0.85); color: #fff;
+    border: none; cursor: pointer; font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .photo-add-area {
+    border: 2px dashed var(--line); background: var(--paper);
+    padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s;
+  }
+  .photo-add-area:hover { border-color: var(--gold); background: #fdf8f0; }
+  .photo-count-label { font-size: 11px; color: var(--muted); text-align: right; letter-spacing: 1px; margin-bottom: 8px; }
+
+  /* 링크 박스 */
+  .link-box {
+    font-size: 11px; color: var(--muted); word-break: break-all;
+    padding: 10px 12px; background: var(--cream); border: 1px solid var(--line);
+    margin-bottom: 10px; line-height: 1.6;
+  }
+  .link-btns { display: flex; gap: 8px; }
+  .link-btns button {
+    flex: 1; padding: 10px; font-size: 12px; letter-spacing: 1px;
+    cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
+  }
+  .btn-copy-sm { background: var(--accent); color: var(--white); border: none; }
+  .btn-go-sm { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+  /* 부고 정보 요약 */
+  .info-row { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(212,207,198,0.4); }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; min-width: 56px; flex-shrink: 0; }
+  .info-value { font-size: 13px; color: var(--accent); }
+
+  /* 토스트 */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--accent); color: var(--white);
+    padding: 12px 24px; font-size: 13px; letter-spacing: 1px;
+    opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; z-index: 9999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* 업로드 진행 */
+  .upload-progress {
+    display: none; background: #fdf8f0; border: 1px solid var(--gold);
+    padding: 12px 16px; margin-top: 12px; font-size: 12px; color: var(--gold);
+    letter-spacing: 1px; text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+  <div class="loading-flower">✿</div>
+  <div class="loading-text">불러오는 중...</div>
+</div>
+
+<header>
+  <a href="/" class="logo">소풍<span>부고</span></a>
+  <a href="#" id="headerBugoLink" style="font-size:12px;color:var(--gold);text-decoration:none;letter-spacing:1px;">부고장 보기 →</a>
+</header>
+
+<div class="container" id="mainContent" style="display:none;">
+
+  <!-- 부고 정보 요약 -->
+  <div class="section-card" style="margin-top:8px;">
+    <div class="section-card-title">
+      부 고 정 보
+      <span class="section-badge" id="bugoIdBadge"></span>
+    </div>
+    <div id="bugoInfoRows"></div>
+  </div>
+
+  <!-- 사진 관리 -->
+  <div class="section-card">
+    <div class="section-card-title">
+      생 전 사 진 관 리
+      <span class="section-badge" id="photoCountBadge">0 / 9</span>
+    </div>
+
+    <div class="photo-count-label" id="photoCountLabel"></div>
+    <div class="manage-photo-grid" id="managePhotoGrid"></div>
+
+    <div class="photo-add-area" id="photoAddArea" onclick="document.getElementById('addPhotoInput').click()">
+      <input type="file" id="addPhotoInput" accept="image/*" multiple style="display:none" onchange="handleAddPhoto(event)">
+      <div style="font-size:24px; margin-bottom:8px;">📷</div>
+      <div style="font-size:13px; color:var(--accent); letter-spacing:1px; margin-bottom:4px;">사진 추가</div>
+      <div style="font-size:11px; color:var(--muted);">클릭하여 사진 선택 (최대 9장)</div>
+    </div>
+
+    <div class="upload-progress" id="uploadProgress">업로드 중...</div>
+  </div>
+
+  <!-- 부고장 링크 -->
+  <div class="section-card">
+    <div class="section-card-title">부 고 장 링 크</div>
+    <div class="link-box" id="bugoLinkBox"></div>
+    <div class="link-btns">
+      <button class="btn-copy-sm" onclick="copyBugoUrl()">📋 링크 복사</button>
+      <button class="btn-go-sm" onclick="goBugo()">부고장 보기 →</button>
+    </div>
+  </div>
+
+  <!-- 조의금 기록장 -->
+  <div class="section-card" id="condolenceSection" style="display:none;">
+    <div class="section-card-title">조 의 금 기 록 장</div>
+    <div class="link-box" id="condolenceLinkBox"></div>
+    <div class="link-btns">
+      <button class="btn-copy-sm" onclick="copyCondolenceUrl()">📋 링크 복사</button>
+      <button class="btn-go-sm" onclick="goCondolence()">기록장 보기 →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- 로그인 박스 -->
+<div class="container" id="loginContainer" style="display:none;">
+  <div id="loginBox">
+    <div class="login-title">관리자 확인</div>
+    <div class="login-sub">상주 관리 페이지입니다.<br>부고장 생성 시 설정한 비밀번호를 입력해 주세요.</div>
+    <div class="login-name" id="loginDeceasedName"></div>
+    <input type="password" id="loginPw" placeholder="휴대폰 뒷 4자리" maxlength="4"
+      inputmode="numeric" pattern="[0-9]*" autocomplete="off"
+      style="width:100%;padding:12px 14px;border:1px solid var(--line);background:var(--paper);outline:none;margin-bottom:12px;font-family:'Noto Sans KR',sans-serif;">
+    <button class="btn-primary" onclick="doLogin()">확 인</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB1wl0aW7EY2QFGdcjhMOBl66g96C_Bflg",
+  authDomain: "sopungbugo.firebaseapp.com",
+  projectId: "sopungbugo",
+  storageBucket: "sopungbugo.firebasestorage.app",
+  messagingSenderId: "726872101146",
+  appId: "1:726872101146:web:cbd7fcc97007c35e611ca3"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+const params = new URLSearchParams(window.location.search);
+const bugoId = params.get('id');
+let _data = null;
+let _photos = []; // { url, storagePath } or { url, isNew, file }
+
+async function init() {
+  if (!bugoId) {
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('loginContainer').style.display = 'block';
+    document.getElementById('loginDeceasedName').textContent = '부고 ID가 없습니다.';
+    return;
+  }
+  try {
+    const snap = await getDoc(doc(db, 'bugos', bugoId));
+    if (!snap.exists()) {
+      showToast('부고장을 찾을 수 없습니다');
+      document.getElementById('loadingOverlay').style.display = 'none';
+      return;
+    }
+    _data = snap.data();
+    document.getElementById('loadingOverlay').style.display = 'none';
+
+    // 비밀번호 필요한 경우 로그인 화면
+    if (_data.password) {
+      document.getElementById('loginContainer').style.display = 'block';
+      document.getElementById('loginDeceasedName').textContent = '故 ' + _data.deceased.name + ' 님';
+      document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    } else {
+      showManage();
+    }
+  } catch(e) {
+    console.error(e);
+    showToast('오류가 발생했습니다');
+    document.getElementById('loadingOverlay').style.display = 'none';
+  }
+}
+
+window.doLogin = function() {
+  const pw = document.getElementById('loginPw').value;
+  if (pw !== _data.password) { showToast('비밀번호가 틀렸습니다'); return; }
+  document.getElementById('loginContainer').style.display = 'none';
+  showManage();
+};
+
+function showManage() {
+  document.getElementById('mainContent').style.display = 'block';
+  const d = _data.deceased;
+  const f = _data.funeral;
+
+  // 헤더 부고장 링크
+  document.getElementById('headerBugoLink').href = `/bugo.html?id=${bugoId}`;
+
+  // 부고 정보 요약
+  document.getElementById('bugoIdBadge').textContent = bugoId;
+  const rows = [
+    { label: '고인', value: '故 ' + d.name + ' 님' },
+    { label: '성별', value: d.gender === '남' ? '남성' : '여성' },
+    { label: '별세일', value: d.date ? formatDate(d.date) : '—' },
+    { label: '장례식장', value: f.hall || '—' },
+    { label: '발인일', value: f.date ? formatDate(f.date) : '—' },
+  ];
+  const rowsEl = document.getElementById('bugoInfoRows');
+  rowsEl.innerHTML = rows.map(r => `
+    <div class="info-row">
+      <span class="info-label">${r.label}</span>
+      <span class="info-value">${r.value}</span>
+    </div>`).join('');
+
+  // 사진 초기화
+  _photos = (_data.photos || []).map(url => ({ url, storagePath: null }));
+  renderManagePhotos();
+
+  // 부고장 링크
+  const bugoUrl = 'https://sopungbugo.com/bugo.html?id=' + bugoId;
+  document.getElementById('bugoLinkBox').textContent = bugoUrl;
+
+  // 조의금 기록장
+  if (_data.options?.record || _data.password) {
+    document.getElementById('condolenceSection').style.display = 'block';
+    const condoUrl = 'https://sopungbugo.com/condolence.html?id=' + bugoId;
+    document.getElementById('condolenceLinkBox').textContent = condoUrl;
+  }
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const [y, m, dd] = d.split('-');
+  return y + '년 ' + parseInt(m) + '월 ' + parseInt(dd) + '일';
+}
+
+function renderManagePhotos() {
+  const grid = document.getElementById('managePhotoGrid');
+  grid.innerHTML = '';
+  _photos.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'manage-photo-item';
+    div.innerHTML = `<img src="${p.url}" alt="사진 ${i+1}" loading="lazy">
+      <button class="manage-photo-remove" onclick="removeManagePhoto(${i})" title="삭제">✕</button>`;
+    grid.appendChild(div);
+  });
+  const count = _photos.length;
+  document.getElementById('photoCountBadge').textContent = count + ' / 9';
+  document.getElementById('photoCountLabel').textContent = count > 0 ? count + '장의 사진이 있어요' : '';
+  document.getElementById('photoAddArea').style.display = count >= 9 ? 'none' : 'block';
+}
+
+window.removeManagePhoto = async function(i) {
+  if (!confirm('이 사진을 삭제할까요?')) return;
+  _photos.splice(i, 1);
+  renderManagePhotos();
+  await savePhotos();
+};
+
+window.handleAddPhoto = async function(e) {
+  const files = Array.from(e.target.files);
+  const remaining = 9 - _photos.length;
+  if (remaining <= 0) { showToast('사진은 최대 9장까지 추가할 수 있어요'); return; }
+  const toAdd = files.slice(0, remaining);
+
+  document.getElementById('uploadProgress').style.display = 'block';
+  document.getElementById('uploadProgress').textContent = '업로드 중... (0/' + toAdd.length + ')';
+
+  try {
+    for (let j = 0; j < toAdd.length; j++) {
+      const compressed = await compressImage(toAdd[j], 1200, 0.82);
+      const storageRef = ref(storage, `photos/${bugoId}/${Date.now()}_${j}.jpg`);
+      await uploadBytes(storageRef, compressed);
+      const url = await getDownloadURL(storageRef);
+      _photos.push({ url, storagePath: storageRef.fullPath });
+      document.getElementById('uploadProgress').textContent = '업로드 중... (' + (j+1) + '/' + toAdd.length + ')';
+    }
+    await savePhotos();
+    renderManagePhotos();
+    showToast('사진이 추가되었습니다');
+  } catch(err) {
+    console.error(err);
+    showToast('업로드 중 오류가 발생했습니다');
+  } finally {
+    document.getElementById('uploadProgress').style.display = 'none';
+    e.target.value = '';
+  }
+};
+
+async function savePhotos() {
+  const urls = _photos.map(p => p.url);
+  await updateDoc(doc(db, 'bugos', bugoId), { photos: urls });
+}
+
+async function compressImage(file, maxSize, quality) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.width, h = img.height;
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else { w = Math.round(w * maxSize / h); h = maxSize; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => resolve(new File([blob], file.name, { type: 'image/jpeg' })), 'image/jpeg', quality);
+    };
+    img.src = url;
+  });
+}
+
+// 링크 함수들
+window.copyBugoUrl = function() {
+  const url = 'https://sopungbugo.com/bugo.html?id=' + bugoId;
+  navigator.clipboard.writeText(url).then(() => showToast('부고장 링크가 복사되었습니다'));
+};
+window.goBugo = function() { window.open('/bugo.html?id=' + bugoId, '_blank'); };
+window.copyCondolenceUrl = function() {
+  const url = 'https://sopungbugo.com/condolence.html?id=' + bugoId;
+  navigator.clipboard.writeText(url).then(() => showToast('조의금 기록장 링크가 복사되었습니다'));
+};
+window.goCondolence = function() { window.open('/condolence.html?id=' + bugoId, '_blank'); };
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+init();
+</script>
+</body>
+</html>
