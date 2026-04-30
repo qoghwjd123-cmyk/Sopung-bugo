@@ -584,9 +584,11 @@ async function loadBugo() {
 
     // 옵션
     if (!data.options?.flower) document.getElementById('flowerBtn').style.display = 'none';
-    if (!data.options?.record) document.getElementById('recordBtn').style.display = 'none';
     if (data.options?.record) {
-      document.getElementById('recordBtn').href = `/condolence.html?id=${bugoId}`;
+      // 조의금 기록장 버튼은 부고장에서 표시 안 함 (manage.html에서만 접근)
+      document.getElementById('recordBtn').style.display = 'none';
+    } else {
+      document.getElementById('recordBtn').style.display = 'none';
     }
 
     // 발인 체크
