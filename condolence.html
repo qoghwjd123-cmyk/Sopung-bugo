@@ -237,6 +237,7 @@
 <div class="tab-bar">
   <button class="tab-btn active" id="tab-write" onclick="switchTab('write')">기 록 하 기</button>
   <button class="tab-btn" id="tab-list" onclick="switchTab('list')">방 명 록 <span class="tab-badge" id="tabBadge">0</span></button>
+  <button class="tab-btn" id="tab-expense" onclick="switchTab('expense')">지 출 <span class="tab-badge" id="expenseBadge">0</span></button>
 </div>
 
 <div class="container">
@@ -249,12 +250,16 @@
         <span class="summary-value" id="totalCount">—</span>
       </div>
       <div class="summary-item">
-        <span class="summary-label">오늘 기록</span>
-        <span class="summary-value" id="todayCount">—</span>
-      </div>
-      <div class="summary-item summary-total">
         <span class="summary-label">총 조의금</span>
         <span class="summary-value" id="totalAmount" style="font-size:17px;">—</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">총 지출</span>
+        <span class="summary-value" id="totalExpense" style="font-size:17px;color:#c0392b;">—</span>
+      </div>
+      <div class="summary-item summary-total">
+        <span class="summary-label">잔 액</span>
+        <span class="summary-value" id="balanceAmount" style="font-size:17px;color:var(--gold);">—</span>
       </div>
     </div>
 
@@ -317,9 +322,42 @@
     <div id="entryList"></div>
   </div>
 
-</div>
+  <!-- 지출 탭 -->
+  <div class="tab-panel" id="panel-expense">
+    <div class="form-section" style="margin-bottom:28px;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>항목명 *</label>
+          <input type="text" id="expenseName" placeholder="도우미 비용, 식대 등" maxlength="30">
+        </div>
+        <div class="form-group">
+          <label>금액 (원) *</label>
+          <input type="number" id="expenseAmount" placeholder="100000" min="0" inputmode="numeric" oninput="updateExpensePreview()">
+          <div class="amount-preview" id="expensePreview"></div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>메모 (선택)</label>
+        <input type="text" id="expenseMemo" placeholder="간단한 메모" maxlength="50">
+      </div>
+      <div class="amount-presets">
+        <button type="button" onclick="setExpenseAmount(50000)">5만</button>
+        <button type="button" onclick="setExpenseAmount(100000)">10만</button>
+        <button type="button" onclick="setExpenseAmount(200000)">20만</button>
+        <button type="button" onclick="setExpenseAmount(300000)">30만</button>
+        <button type="button" onclick="setExpenseAmount(500000)">50만</button>
+      </div>
+      <button class="btn-add" onclick="addExpense()">지 출 기 록 하 기</button>
+    </div>
 
-<div id="toast"></div>
+    <div class="list-header">
+      <span class="list-title">지출 내역</span>
+      <span class="count-badge" id="expenseCount">0건</span>
+    </div>
+    <div id="expenseList"><div class="list-empty">지출 내역이 없어요</div></div>
+  </div>
+
+</div>
 <button class="btn-top" id="btnTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
 <button class="admin-trigger" id="adminTrigger" onclick="openAdminModal()" title="관리자">🔑</button>
 
@@ -427,6 +465,15 @@ onSnapshot(q, (snapshot) => {
 }, (err) => {
   console.error(err);
   document.getElementById('loadingScreen').classList.add('hide');
+});
+
+// 지출 리스너
+const expenseRef = collection(db, 'bugos', bugoId, 'expenses');
+const expenseQ = query(expenseRef, orderBy('createdAt', 'desc'));
+onSnapshot(expenseQ, (snapshot) => {
+  expenses = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderExpenses();
+  updateSummary();
 });
 
 // 탭 전환
@@ -632,11 +679,76 @@ window.saveAmount = async function() {
   }
 };
 
+let expenses = [];
+
+window.setExpenseAmount = function(val) {
+  document.getElementById('expenseAmount').value = val;
+  updateExpensePreview();
+};
+window.updateExpensePreview = function() {
+  const val = parseInt(document.getElementById('expenseAmount').value) || 0;
+  document.getElementById('expensePreview').textContent = val > 0 ? formatMoney(val) + ' 원' : '';
+};
+
+window.addExpense = async function() {
+  const name = document.getElementById('expenseName').value.trim();
+  const amount = parseInt(document.getElementById('expenseAmount').value) || 0;
+  const memo = document.getElementById('expenseMemo').value.trim();
+  if (!name) { showToast('항목명을 입력해주세요'); return; }
+  if (!amount) { showToast('금액을 입력해주세요'); return; }
+  try {
+    await addDoc(collection(db, 'bugos', bugoId, 'expenses'), {
+      name, amount, memo,
+      date: today(),
+      createdAt: new Date().toISOString()
+    });
+    document.getElementById('expenseName').value = '';
+    document.getElementById('expenseAmount').value = '';
+    document.getElementById('expenseMemo').value = '';
+    document.getElementById('expensePreview').textContent = '';
+    showToast('지출이 기록됐어요');
+  } catch(e) {
+    console.error(e);
+    showToast('기록 중 오류가 발생했어요');
+  }
+};
+
+window.deleteExpense = async function(id) {
+  if (!confirm('이 지출 항목을 삭제할까요?')) return;
+  try {
+    await deleteDoc(doc(db, 'bugos', bugoId, 'expenses', id));
+    showToast('삭제됐어요');
+  } catch(e) { showToast('삭제 실패'); }
+};
+
+function renderExpenses() {
+  const el = document.getElementById('expenseList');
+  document.getElementById('expenseCount').textContent = expenses.length + '건';
+  document.getElementById('expenseBadge').textContent = expenses.length;
+  if (!expenses.length) { el.innerHTML = '<div class="list-empty">지출 내역이 없어요</div>'; return; }
+  el.innerHTML = expenses.map((e, i) => `
+    <div class="entry-card">
+      <div class="entry-index">${String(expenses.length - i).padStart(2,'0')}</div>
+      <div class="entry-main">
+        <div class="entry-name" style="font-size:15px;">${escHtml(e.name)}</div>
+        <div class="entry-meta">
+          <span class="entry-amount" style="color:#c0392b;border-color:#f5c6c6;background:#fff5f5;">${formatMoney(e.amount)}원</span>
+          <span style="font-size:11px;color:var(--muted)">${e.date || ''}</span>
+        </div>
+        ${e.memo ? `<div class="entry-message">${escHtml(e.memo)}</div>` : ''}
+      </div>
+      ${isAdmin ? `<div class="entry-actions"><button class="btn-delete" onclick="deleteExpense('${e.id}')">삭제</button></div>` : ''}
+    </div>`).join('');
+}
+
 function updateSummary() {
   document.getElementById('totalCount').textContent = entries.length;
-  document.getElementById('todayCount').textContent = entries.filter(e => e.date === today()).length;
   const total = entries.reduce((s, e) => s + (e.amount||0), 0);
+  const totalExp = expenses.reduce((s, e) => s + (e.amount||0), 0);
+  const balance = total - totalExp;
   document.getElementById('totalAmount').textContent = formatMoney(total) + '원';
+  document.getElementById('totalExpense').textContent = formatMoney(totalExp) + '원';
+  document.getElementById('balanceAmount').textContent = formatMoney(balance) + '원';
 }
 
 window.setAmount = function(val) {
