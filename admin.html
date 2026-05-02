@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>소풍부고 — 어드민</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1814; --paper: #f5f0e8; --cream: #ede8dc;
+    --muted: #8a8478; --accent: #4a4035; --gold: #b89a5a;
+    --line: #d4cfc6; --white: #fdfbf7;
+    --active: #2d6a4f; --active-bg: #d8f3dc;
+    --soon: #b45309; --soon-bg: #fef3c7;
+    --done: #6b7280; --done-bg: #f3f4f6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1814; color: var(--paper); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; }
+
+  /* 로그인 */
+  #loginScreen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+  }
+  .login-box {
+    background: var(--white); padding: 40px 32px; width: 100%; max-width: 360px;
+  }
+  .login-logo { font-family: 'Noto Serif KR', serif; font-size: 20px; color: var(--accent); letter-spacing: 3px; margin-bottom: 8px; }
+  .login-logo span { color: var(--gold); }
+  .login-sub { font-size: 12px; color: var(--muted); letter-spacing: 1px; margin-bottom: 32px; }
+  .login-box input {
+    width: 100%; padding: 12px 14px; border: 1px solid var(--line);
+    background: var(--paper); font-size: 16px; font-family: 'Noto Sans KR', sans-serif;
+    color: var(--ink); outline: none; margin-bottom: 12px;
+  }
+  .login-box input:focus { border-color: var(--gold); }
+  .login-btn {
+    width: 100%; padding: 14px; background: var(--accent); color: var(--white);
+    border: none; font-size: 13px; letter-spacing: 3px; cursor: pointer;
+    font-family: 'Noto Serif KR', serif;
+  }
+  .login-btn:hover { background: #2e2820; }
+  .login-error { font-size: 12px; color: #c0392b; margin-top: 8px; text-align: center; display: none; }
+
+  /* 어드민 헤더 */
+  header {
+    background: #231f1b; border-bottom: 1px solid rgba(212,207,198,0.15);
+    padding: 16px 28px; display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-family: 'Noto Serif KR', serif; font-size: 16px; color: var(--paper); letter-spacing: 3px; }
+  .logo span { color: var(--gold); }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  .total-count { font-size: 12px; color: var(--muted); letter-spacing: 1px; }
+  .logout-btn {
+    font-size: 11px; color: var(--muted); letter-spacing: 1px; cursor: pointer;
+    background: none; border: 1px solid rgba(212,207,198,0.2); padding: 6px 14px;
+  }
+  .logout-btn:hover { color: var(--paper); border-color: var(--paper); }
+
+  /* 탭 */
+  .tab-bar {
+    background: #231f1b; padding: 0 28px;
+    display: flex; gap: 0; border-bottom: 1px solid rgba(212,207,198,0.1);
+  }
+  .tab {
+    padding: 14px 20px; font-size: 12px; letter-spacing: 2px; color: var(--muted);
+    cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s;
+    background: none; border-left: none; border-right: none; border-top: none;
+  }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab:hover { color: var(--paper); }
+
+  /* 칸반 뷰 */
+  .kanban-view { display: none; padding: 24px 28px; overflow-x: auto; }
+  .kanban-view.active { display: flex; gap: 20px; min-height: calc(100vh - 140px); }
+  .kanban-col { flex: 0 0 320px; display: flex; flex-direction: column; gap: 12px; }
+  .col-header {
+    padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
+    border-radius: 0; position: sticky; top: 0;
+  }
+  .col-title { font-size: 11px; letter-spacing: 3px; font-weight: 600; }
+  .col-count {
+    font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+  }
+  .col-active .col-header { background: rgba(45,106,79,0.2); border-left: 3px solid #2d6a4f; }
+  .col-active .col-title { color: #74c69d; }
+  .col-active .col-count { background: rgba(45,106,79,0.3); color: #74c69d; }
+  .col-soon .col-header { background: rgba(180,83,9,0.2); border-left: 3px solid #f59e0b; }
+  .col-soon .col-title { color: #fcd34d; }
+  .col-soon .col-count { background: rgba(180,83,9,0.3); color: #fcd34d; }
+  .col-done .col-header { background: rgba(107,114,128,0.15); border-left: 3px solid #6b7280; }
+  .col-done .col-title { color: #9ca3af; }
+  .col-done .col-count { background: rgba(107,114,128,0.2); color: #9ca3af; }
+
+  /* 카드 */
+  .bugo-card {
+    background: #231f1b; border: 1px solid rgba(212,207,198,0.12);
+    padding: 16px; cursor: default; transition: border-color 0.2s;
+  }
+  .bugo-card:hover { border-color: rgba(184,154,90,0.4); }
+  .card-name { font-family: 'Noto Serif KR', serif; font-size: 15px; color: var(--paper); letter-spacing: 1px; margin-bottom: 4px; }
+  .card-hall { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .meta-tag {
+    font-size: 10px; letter-spacing: 1px; padding: 3px 8px;
+    border: 1px solid rgba(212,207,198,0.15); color: var(--muted);
+  }
+  .meta-tag.photo { border-color: rgba(184,154,90,0.3); color: var(--gold); }
+  .meta-tag.phone { border-color: rgba(45,106,79,0.4); color: #74c69d; }
+  .meta-tag.no-phone { border-color: rgba(107,114,128,0.2); color: #6b7280; }
+  .card-date { font-size: 11px; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.5px; }
+  .card-btns { display: flex; gap: 6px; }
+  .card-btn {
+    flex: 1; padding: 7px; font-size: 10px; letter-spacing: 1px; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif; text-align: center; text-decoration: none;
+    display: block; transition: all 0.15s;
+  }
+  .btn-view { background: var(--accent); color: var(--white); border: none; }
+  .btn-view:hover { background: #2e2820; }
+  .btn-manage { background: transparent; color: var(--gold); border: 1px solid rgba(184,154,90,0.4); }
+  .btn-manage:hover { background: rgba(184,154,90,0.1); }
+
+  /* 리스트 뷰 */
+  .list-view { display: none; padding: 24px 28px; }
+  .list-view.active { display: block; }
+  .list-table { width: 100%; border-collapse: collapse; }
+  .list-table th {
+    font-size: 10px; letter-spacing: 2px; color: var(--muted); text-align: left;
+    padding: 10px 14px; border-bottom: 1px solid rgba(212,207,198,0.15);
+    font-weight: 400;
+  }
+  .list-table td {
+    padding: 12px 14px; font-size: 13px; color: var(--paper);
+    border-bottom: 1px solid rgba(212,207,198,0.08);
+  }
+  .list-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .status-badge {
+    font-size: 10px; letter-spacing: 1px; padding: 3px 8px; display: inline-block;
+  }
+  .badge-active { background: rgba(45,106,79,0.2); color: #74c69d; }
+  .badge-soon { background: rgba(180,83,9,0.2); color: #fcd34d; }
+  .badge-done { background: rgba(107,114,128,0.15); color: #9ca3af; }
+
+  /* 로딩 */
+  .loading { text-align: center; padding: 60px; color: var(--muted); font-size: 13px; letter-spacing: 2px; }
+
+  /* 빈 상태 */
+  .empty-col { padding: 20px 16px; text-align: center; color: rgba(138,132,120,0.4); font-size: 12px; letter-spacing: 1px; }
+
+  /* 토스트 */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--accent); color: var(--white);
+    padding: 12px 24px; font-size: 13px; letter-spacing: 1px;
+    opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 9999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 768px) {
+    .kanban-view.active { flex-direction: column; padding: 16px; }
+    .kanban-col { flex: 0 0 auto; }
+    .list-view { padding: 16px; overflow-x: auto; }
+    header { padding: 14px 16px; }
+    .tab-bar { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">소풍<span>부고</span></div>
+    <div class="login-sub">ADMIN · 관리자 전용</div>
+    <input type="password" id="adminPw" placeholder="관리자 비밀번호" autocomplete="off"
+      style="-webkit-text-security:disc;" onkeydown="if(event.key==='Enter') doAdminLogin()">
+    <button class="login-btn" onclick="doAdminLogin()">로 그 인</button>
+    <div class="login-error" id="loginError">비밀번호가 올바르지 않습니다</div>
+  </div>
+</div>
+
+<!-- 어드민 -->
+<div id="adminScreen" style="display:none;">
+  <header>
+    <div class="logo">소풍<span>부고</span> <span style="font-size:10px;letter-spacing:2px;color:var(--muted);margin-left:8px;">ADMIN</span></div>
+    <div class="header-right">
+      <span class="total-count" id="totalCount"></span>
+      <button class="logout-btn" onclick="doLogout()">로그아웃</button>
+    </div>
+  </header>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('kanban')">칸반 보드</button>
+    <button class="tab" onclick="switchTab('list')">목록 보기</button>
+  </div>
+
+  <!-- 칸반 -->
+  <div class="kanban-view active" id="kanbanView">
+    <div class="kanban-col col-active">
+      <div class="col-header">
+        <span class="col-title">진행 중</span>
+        <span class="col-count" id="activeCount">0</span>
+      </div>
+      <div id="activeCol"><div class="loading">불러오는 중...</div></div>
+    </div>
+    <div class="kanban-col col-soon">
+      <div class="col-header">
+        <span class="col-title">내일 발인</span>
+        <span class="col-count" id="soonCount">0</span>
+      </div>
+      <div id="soonCol"></div>
+    </div>
+    <div class="kanban-col col-done">
+      <div class="col-header">
+        <span class="col-title">발인 완료</span>
+        <span class="col-count" id="doneCount">0</span>
+      </div>
+      <div id="doneCol"></div>
+    </div>
+  </div>
+
+  <!-- 리스트 -->
+  <div class="list-view" id="listView">
+    <table class="list-table">
+      <thead>
+        <tr>
+          <th>고인</th>
+          <th>장례식장</th>
+          <th>발인일</th>
+          <th>상태</th>
+          <th>사진</th>
+          <th>연락처</th>
+          <th>생성일</th>
+          <th>링크</th>
+        </tr>
+      </thead>
+      <tbody id="listBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB1wl0aW7EY2QFGdcjhMOBl66g96C_Bflg",
+  authDomain: "sopungbugo.firebaseapp.com",
+  projectId: "sopungbugo",
+  storageBucket: "sopungbugo.firebasestorage.app",
+  messagingSenderId: "726872101146",
+  appId: "1:726872101146:web:cbd7fcc97007c35e611ca3"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const ADMIN_PASSWORD = "0515";
+let allBugos = [];
+
+// 로그인
+window.doAdminLogin = function() {
+  const pw = document.getElementById('adminPw').value;
+  if (pw === ADMIN_PASSWORD) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminScreen').style.display = 'block';
+    loadBugos();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+};
+
+window.doLogout = function() {
+  document.getElementById('adminScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminPw').value = '';
+};
+
+// 탭 전환
+window.switchTab = function(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('kanbanView').classList.toggle('active', tab === 'kanban');
+  document.getElementById('listView').classList.toggle('active', tab === 'list');
+};
+
+// 상태 판별
+function getStatus(funeralDate) {
+  if (!funeralDate) return 'active';
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+  const fd = new Date(funeralDate);
+  fd.setHours(0,0,0,0);
+  if (fd < today) return 'done';
+  if (fd.getTime() === tomorrow.getTime()) return 'soon';
+  return 'active';
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  const [y, m, dd] = d.split('-');
+  return y + '년 ' + parseInt(m) + '월 ' + parseInt(dd) + '일';
+}
+
+function formatCreatedAt(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return (d.getMonth()+1) + '/' + d.getDate() + ' ' + d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+
+// 카드 생성
+function makeCard(b) {
+  const photos = b.photos?.length || 0;
+  const phone = b.contactPhone || '';
+  const funeralDate = formatDate(b.funeral?.date);
+  return `
+    <div class="bugo-card">
+      <div class="card-name">故 ${b.deceased?.name || '—'} 님</div>
+      <div class="card-hall">${b.funeral?.hall || '장례식장 미입력'}</div>
+      <div class="card-meta">
+        ${photos > 0 ? `<span class="meta-tag photo">📷 ${photos}장</span>` : '<span class="meta-tag">사진 없음</span>'}
+        ${phone ? `<span class="meta-tag phone">📞 ${phone}</span>` : '<span class="meta-tag no-phone">연락처 없음</span>'}
+      </div>
+      <div class="card-date">발인 ${funeralDate}</div>
+      <div class="card-btns">
+        <a href="/bugo.html?id=${b.id}" target="_blank" class="card-btn btn-view">부고장</a>
+        <a href="/manage.html?id=${b.id}" target="_blank" class="card-btn btn-manage">관리</a>
+      </div>
+    </div>`;
+}
+
+// 리스트 행 생성
+function makeRow(b) {
+  const status = getStatus(b.funeral?.date);
+  const badgeClass = status === 'active' ? 'badge-active' : status === 'soon' ? 'badge-soon' : 'badge-done';
+  const badgeText = status === 'active' ? '진행 중' : status === 'soon' ? '내일 발인' : '완료';
+  const photos = b.photos?.length || 0;
+  const phone = b.contactPhone || '—';
+  return `
+    <tr>
+      <td><strong>故 ${b.deceased?.name || '—'}</strong></td>
+      <td style="color:var(--muted)">${b.funeral?.hall || '—'}</td>
+      <td style="color:var(--muted)">${formatDate(b.funeral?.date)}</td>
+      <td><span class="status-badge ${badgeClass}">${badgeText}</span></td>
+      <td style="color:${photos > 0 ? 'var(--gold)' : 'var(--muted)'}">${photos > 0 ? photos + '장' : '없음'}</td>
+      <td style="color:${phone !== '—' ? '#74c69d' : 'var(--muted)'}">${phone}</td>
+      <td style="color:var(--muted);font-size:11px">${formatCreatedAt(b.createdAt)}</td>
+      <td>
+        <a href="/bugo.html?id=${b.id}" target="_blank" style="color:var(--gold);font-size:11px;letter-spacing:1px;text-decoration:none;margin-right:10px;">보기</a>
+        <a href="/manage.html?id=${b.id}" target="_blank" style="color:var(--muted);font-size:11px;letter-spacing:1px;text-decoration:none;">관리</a>
+      </td>
+    </tr>`;
+}
+
+async function loadBugos() {
+  try {
+    const q = query(collection(db, 'bugos'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    allBugos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // 총 건수
+    document.getElementById('totalCount').textContent = '총 ' + allBugos.length + '건';
+
+    // 상태별 분류
+    const active = [], soon = [], done = [];
+    allBugos.forEach(b => {
+      const s = getStatus(b.funeral?.date);
+      if (s === 'active') active.push(b);
+      else if (s === 'soon') soon.push(b);
+      else done.push(b);
+    });
+
+    // 칸반
+    document.getElementById('activeCount').textContent = active.length;
+    document.getElementById('soonCount').textContent = soon.length;
+    document.getElementById('doneCount').textContent = done.length;
+
+    document.getElementById('activeCol').innerHTML = active.length ? active.map(makeCard).join('') : '<div class="empty-col">진행 중인 부고가 없어요</div>';
+    document.getElementById('soonCol').innerHTML = soon.length ? soon.map(makeCard).join('') : '<div class="empty-col">내일 발인 없음</div>';
+    document.getElementById('doneCol').innerHTML = done.length ? done.map(makeCard).join('') : '<div class="empty-col">완료된 부고가 없어요</div>';
+
+    // 리스트
+    document.getElementById('listBody').innerHTML = allBugos.map(makeRow).join('');
+
+  } catch(e) {
+    console.error(e);
+    showToast('데이터를 불러오지 못했습니다');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
