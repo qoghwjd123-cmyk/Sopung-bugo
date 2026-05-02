@@ -243,7 +243,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, orderBy, query, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1wl0aW7EY2QFGdcjhMOBl66g96C_Bflg",
@@ -328,6 +328,7 @@ function makeCard(b) {
       <div class="card-btns">
         <a href="/bugo.html?id=${b.id}" target="_blank" class="card-btn btn-view">부고장</a>
         <a href="/manage.html?id=${b.id}" target="_blank" class="card-btn btn-manage">관리</a>
+        <button class="card-btn" onclick="deleteBugo('${b.id}', '${b.deceased?.name}')" style="background:transparent;color:#ef4444;border:1px solid rgba(239,68,68,0.3);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:10px;letter-spacing:1px;padding:7px;flex:0 0 36px;">🗑</button>
       </div>
     </div>`;
 }
@@ -350,7 +351,8 @@ function makeRow(b) {
       <td style="color:var(--muted);font-size:11px">${formatCreatedAt(b.createdAt)}</td>
       <td>
         <a href="/bugo.html?id=${b.id}" target="_blank" style="color:var(--gold);font-size:11px;letter-spacing:1px;text-decoration:none;margin-right:10px;">보기</a>
-        <a href="/manage.html?id=${b.id}" target="_blank" style="color:var(--muted);font-size:11px;letter-spacing:1px;text-decoration:none;">관리</a>
+        <a href="/manage.html?id=${b.id}" target="_blank" style="color:var(--muted);font-size:11px;letter-spacing:1px;text-decoration:none;margin-right:10px;">관리</a>
+        <button onclick="deleteBugo('${b.id}', '${b.deceased?.name}')" style="background:none;border:none;color:#ef4444;font-size:11px;cursor:pointer;letter-spacing:1px;">삭제</button>
       </td>
     </tr>`;
 }
@@ -390,6 +392,18 @@ async function loadBugos() {
     showToast('데이터를 불러오지 못했습니다');
   }
 }
+
+window.deleteBugo = async function(id, name) {
+  if (!confirm('故 ' + name + ' 님 부고장을 삭제할까요?\n이 작업은 되돌릴 수 없습니다.')) return;
+  try {
+    await deleteDoc(doc(db, 'bugos', id));
+    showToast('삭제됐어요');
+    loadBugos();
+  } catch(e) {
+    console.error(e);
+    showToast('삭제 중 오류가 발생했어요');
+  }
+};
 
 function showToast(msg) {
   const t = document.getElementById('toast');
