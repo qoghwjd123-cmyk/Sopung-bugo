@@ -88,7 +88,8 @@
   .bugo-section:last-of-type { border-bottom: none; }
   .section-label {
     font-family: 'Noto Serif KR', serif;
-    font-size: 10px;
+    font-size: 12px;
+    font-weight: 600;
     letter-spacing: 4px;
     color: var(--gold);
     margin-bottom: 16px;
@@ -161,11 +162,13 @@
 
   /* 계좌 */
   .account-box {
-    background: var(--white);
-    border: 1px solid var(--line);
-    padding: 20px;
-    margin-bottom: 12px;
+    background: var(--paper);
+    border: none;
+    border-bottom: 1px solid var(--line);
+    padding: 20px 4px;
+    margin-bottom: 0;
   }
+  .account-box:first-child { border-top: 1px solid var(--line); }
   .account-name {
     font-family: 'Noto Serif KR', serif;
     font-size: 14px;
@@ -210,10 +213,10 @@
   }
   .btn-flower {
     width: 100%;
-    padding: 14px;
-    background: none;
-    border: 1px solid var(--gold);
-    color: var(--gold);
+    padding: 16px;
+    background: var(--accent);
+    border: none;
+    color: var(--paper);
     font-family: 'Noto Serif KR', serif;
     font-size: 13px;
     letter-spacing: 3px;
@@ -223,7 +226,7 @@
     text-decoration: none;
     display: block;
   }
-  .btn-flower:hover { background: var(--gold); color: var(--white); }
+  .btn-flower:hover { background: #2e2820; }
   .btn-record {
     width: 100%;
     padding: 14px;
@@ -691,7 +694,7 @@ function shareBugoKakao() {
 </script>
 <!-- 조각필름 카카오톡 플로팅 버튼 -->
 <a href="https://pf.kakao.com/_DxixgxlX" target="_blank" rel="noopener"
-  style="position:fixed;bottom:28px;right:20px;z-index:9999;display:flex;align-items:center;gap:8px;background:#FEE500;color:#3C1E1E;padding:12px 18px 12px 14px;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.18);text-decoration:none;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.5px;transition:transform 0.2s,box-shadow 0.2s;"
+  style="position:fixed;bottom:90px;right:20px;z-index:9999;display:flex;align-items:center;gap:8px;background:#FEE500;color:#3C1E1E;padding:12px 18px 12px 14px;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.18);text-decoration:none;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.5px;transition:transform 0.2s,box-shadow 0.2s;"
   onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.22)'"
   onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.18)'">
   <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
