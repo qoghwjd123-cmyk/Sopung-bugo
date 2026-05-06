@@ -605,6 +605,9 @@ async function loadBugo() {
 
 function checkExpired(dateStr) {
   if (!dateStr) return;
+  // 샘플 부고는 오버레이 표시 안 함
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('id') === 'bugo_sample') return;
   const funeralDate = new Date(dateStr);
   const today = new Date();
   today.setHours(0,0,0,0);
