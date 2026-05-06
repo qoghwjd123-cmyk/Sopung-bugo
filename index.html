@@ -572,6 +572,7 @@
     <div style="font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:10px;">고인 성함으로 검색하세요</div>
     <div style="display:flex;gap:8px;margin-bottom:12px;">
       <input type="text" id="findInput" placeholder="성함 입력 (예: 홍길동)" maxlength="10"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
         style="flex:1;padding:10px 14px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;"
         oninput="searchBugo()" onkeydown="if(event.key==='Escape') toggleFindBox()">
       <button onclick="toggleFindBox()" style="padding:10px 16px;background:none;border:1px solid var(--line);font-size:12px;color:var(--muted);cursor:pointer;">닫기</button>
@@ -609,6 +610,7 @@
     <div class="hero-buttons">
       <a href="/create.html" class="btn-primary">부고장 만들기</a>
       <a href="/condolence-create.html" class="btn-secondary">조의금 기록하기</a>
+      <a href="/bugo.html?id=bugo_sample" class="btn-secondary" style="font-size:11px;letter-spacing:2px;opacity:0.8;">샘플 부고장 보기</a>
     </div>
 
     <!-- 통계 카운터 -->
