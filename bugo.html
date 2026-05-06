@@ -535,8 +535,18 @@ async function loadBugo() {
     // 장례식장
     document.getElementById('funeralHall').textContent = f.hall;
     if (f.address) document.getElementById('funeralAddress').textContent = f.address;
-    if (f.date) {
-      const [y,m,dd] = f.date.split('-');
+
+    // 샘플 부고장은 발인 날짜를 오늘+2일로 동적 설정
+    const isSample = new URLSearchParams(window.location.search).get('id') === 'bugo_sample';
+    let funeralDateStr = f.date;
+    if (isSample) {
+      const d2 = new Date();
+      d2.setDate(d2.getDate() + 2);
+      funeralDateStr = d2.toISOString().split('T')[0];
+    }
+
+    if (funeralDateStr) {
+      const [y,m,dd] = funeralDateStr.split('-');
       document.getElementById('funeralDate').textContent = y + '년 ' + parseInt(m) + '월 ' + parseInt(dd) + '일';
     }
     if (f.burial) {
@@ -603,8 +613,8 @@ async function loadBugo() {
     document.getElementById('recordBtn').style.display = 'none';
 
     // 발인 체크
-    checkExpired(f.date);
-    setFuneralBadge(f.date);
+    checkExpired(funeralDateStr);
+    setFuneralBadge(funeralDateStr);
 
   } catch(e) {
     console.error(e);
