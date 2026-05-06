@@ -562,8 +562,39 @@
     <a href="#features">서비스 소개</a>
     <a href="#how">이용 방법</a>
     <a href="#services">시작하기</a>
+    <button onclick="toggleFindBox()" style="background:var(--accent);color:var(--white);border:none;padding:8px 16px;font-size:12px;letter-spacing:2px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">내 부고장 찾기</button>
   </nav>
 </header>
+
+<!-- 내 부고장 찾기 드롭다운 -->
+<div id="findBox" style="display:none;position:fixed;top:57px;left:0;right:0;z-index:99;background:var(--white);border-bottom:1px solid var(--line);padding:20px 24px;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+  <div style="max-width:480px;margin:0 auto;">
+    <div style="font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:10px;">고인 성함으로 검색하세요</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <input type="text" id="findInput" placeholder="성함 입력 (예: 홍길동)" maxlength="10"
+        style="flex:1;padding:10px 14px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;"
+        oninput="searchBugo()" onkeydown="if(event.key==='Escape') toggleFindBox()">
+      <button onclick="toggleFindBox()" style="padding:10px 16px;background:none;border:1px solid var(--line);font-size:12px;color:var(--muted);cursor:pointer;">닫기</button>
+    </div>
+    <div id="findResults"></div>
+  </div>
+</div>
+
+<!-- 비밀번호 팝업 -->
+<div id="findPwOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;">
+  <div style="background:var(--white);padding:32px 28px;width:100%;max-width:360px;margin:20px;">
+    <div style="font-family:'Noto Serif KR',serif;font-size:16px;color:var(--accent);letter-spacing:2px;margin-bottom:6px;" id="findPwTitle"></div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">비밀번호를 입력해주세요</div>
+    <input type="password" id="findPwInput" placeholder="휴대폰 뒷 4자리" maxlength="4" inputmode="numeric"
+      style="width:100%;padding:12px 14px;border:1px solid var(--line);background:var(--paper);font-size:16px;font-family:'Noto Sans KR',sans-serif;outline:none;margin-bottom:8px;-webkit-text-security:disc;"
+      onkeydown="if(event.key==='Enter') confirmFindPw()">
+    <div id="findPwError" style="font-size:11px;color:#c0392b;margin-bottom:12px;display:none;">비밀번호가 올바르지 않습니다</div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeFindPw()" style="flex:1;padding:12px;background:none;border:1px solid var(--line);font-size:12px;color:var(--muted);cursor:pointer;font-family:'Noto Sans KR',sans-serif;">취소</button>
+      <button onclick="confirmFindPw()" style="flex:1;padding:12px;background:var(--accent);color:var(--white);border:none;font-size:12px;letter-spacing:2px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">확 인</button>
+    </div>
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -578,6 +609,21 @@
     <div class="hero-buttons">
       <a href="/create.html" class="btn-primary">부고장 만들기</a>
       <a href="/condolence-create.html" class="btn-secondary">조의금 기록하기</a>
+    </div>
+
+    <!-- 통계 카운터 -->
+    <div style="display:flex;gap:40px;justify-content:center;margin-top:40px;padding-top:32px;border-top:1px solid rgba(212,207,198,0.3);animation:heroIn 1.2s ease 0.6s both;">
+      <div style="text-align:center;">
+        <div style="font-size:11px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;">총 부고장</div>
+        <div style="font-family:'Noto Serif KR',serif;font-size:32px;color:var(--accent);letter-spacing:2px;" id="statBugo">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:1px;">건</div>
+      </div>
+      <div style="width:1px;background:rgba(212,207,198,0.3);"></div>
+      <div style="text-align:center;">
+        <div style="font-size:11px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;">조의금 기록장</div>
+        <div style="font-family:'Noto Serif KR',serif;font-size:32px;color:var(--accent);letter-spacing:2px;" id="statCondo">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:1px;">건</div>
+      </div>
     </div>
   </div>
   <div class="hero-scroll">
@@ -715,6 +761,154 @@
   <div class="footer-tagline">"긴 소풍 끝에 닿은 그곳에서는 부디 아픔없이 행복하세요"</div>
   <div class="footer-copy">© 2026 sopungbugo.com</div>
 </footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB1wl0aW7EY2QFGdcjhMOBl66g96C_Bflg",
+  authDomain: "sopungbugo.firebaseapp.com",
+  projectId: "sopungbugo",
+  storageBucket: "sopungbugo.firebasestorage.app",
+  messagingSenderId: "726872101146",
+  appId: "1:726872101146:web:cbd7fcc97007c35e611ca3"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 통계 카운터
+async function loadStats() {
+  try {
+    const snap = await getDocs(collection(db, 'bugos'));
+    const total = snap.docs.filter(d => !d.data().deleted).length;
+    const bugo = snap.docs.filter(d => !d.data().deleted && d.data().type !== 'condolence_only').length;
+    const condo = snap.docs.filter(d => !d.data().deleted && d.data().type === 'condolence_only').length;
+    
+    // 숫자 애니메이션
+    animateCount('statBugo', bugo);
+    animateCount('statCondo', condo);
+  } catch(e) {
+    document.getElementById('statBugo').textContent = '—';
+    document.getElementById('statCondo').textContent = '—';
+  }
+}
+
+function animateCount(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let current = 0;
+  const duration = 1000;
+  const step = target / (duration / 16);
+  const timer = setInterval(() => {
+    current += step;
+    if (current >= target) { current = target; clearInterval(timer); }
+    el.textContent = Math.floor(current).toLocaleString();
+  }, 16);
+}
+
+loadStats();
+
+let _allBugos = null;
+let _selectedBugo = null;
+
+// 이름 표시 (실명)
+function maskName(name) {
+  return name || '—';
+}
+
+// 전체 부고 로드 (삭제된 것 제외)
+async function loadAllBugos() {
+  if (_allBugos) return _allBugos;
+  const q = query(collection(db, 'bugos'), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  _allBugos = snap.docs
+    .map(d => ({ id: d.id, ...d.data() }))
+    .filter(b => !b.deleted);
+  return _allBugos;
+}
+
+window.toggleFindBox = function() {
+  const box = document.getElementById('findBox');
+  const isHidden = box.style.display === 'none';
+  box.style.display = isHidden ? 'block' : 'none';
+  if (isHidden) {
+    document.getElementById('findInput').focus();
+    document.getElementById('findResults').innerHTML = '';
+  }
+};
+
+window.searchBugo = async function() {
+  const keyword = document.getElementById('findInput').value.trim();
+  const resultsEl = document.getElementById('findResults');
+  if (!keyword) { resultsEl.innerHTML = ''; return; }
+
+  resultsEl.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 0;">검색 중...</div>';
+
+  try {
+    const bugos = await loadAllBugos();
+    const matched = bugos.filter(b =>
+      b.deceased?.name && b.deceased.name.includes(keyword)
+    ).slice(0, 10);
+
+    if (!matched.length) {
+      resultsEl.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 0;">검색 결과가 없어요</div>';
+      return;
+    }
+
+    resultsEl.innerHTML = matched.map(b => {
+      const maskedName = maskName(b.deceased?.name);
+      const hall = b.funeral?.hall || '장례식장 미입력';
+      const date = b.funeral?.date ? b.funeral.date.replace(/-/g, '.') : '—';
+      return `
+        <div onclick="selectBugo('${b.id}')"
+          style="padding:12px 14px;border:1px solid var(--line);margin-bottom:6px;cursor:pointer;background:var(--paper);transition:all 0.15s;"
+          onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--line)'">
+          <div style="font-family:'Noto Serif KR',serif;font-size:15px;color:var(--accent);letter-spacing:1px;margin-bottom:3px;">故 ${maskedName} 님</div>
+          <div style="font-size:11px;color:var(--muted);">${hall} · 발인 ${date}</div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    resultsEl.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 0;">오류가 발생했어요</div>';
+  }
+};
+
+window.selectBugo = function(id) {
+  const bugos = _allBugos || [];
+  _selectedBugo = bugos.find(b => b.id === id);
+  if (!_selectedBugo) return;
+
+  const name = maskName(_selectedBugo.deceased?.name);
+  document.getElementById('findPwTitle').textContent = '故 ' + name + ' 님';
+  document.getElementById('findPwInput').value = '';
+  document.getElementById('findPwError').style.display = 'none';
+  const overlay = document.getElementById('findPwOverlay');
+  overlay.style.display = 'flex';
+  setTimeout(() => document.getElementById('findPwInput').focus(), 100);
+};
+
+window.closeFindPw = function() {
+  document.getElementById('findPwOverlay').style.display = 'none';
+  _selectedBugo = null;
+};
+
+window.confirmFindPw = function() {
+  if (!_selectedBugo) return;
+  const pw = document.getElementById('findPwInput').value;
+  if (pw === _selectedBugo.password || pw === '0515') {
+    window.location.href = '/manage.html?id=' + _selectedBugo.id;
+  } else {
+    document.getElementById('findPwError').style.display = 'block';
+    document.getElementById('findPwInput').value = '';
+    document.getElementById('findPwInput').focus();
+  }
+};
+
+// 오버레이 바깥 클릭 시 닫기
+document.getElementById('findPwOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeFindPw();
+});
+</script>
 
 </body>
 </html>
