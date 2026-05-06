@@ -442,12 +442,12 @@
   </div>
 
   <!-- 하단 플로팅 버튼 2개 -->
-  <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:100;display:flex;gap:12px;white-space:nowrap;">
-    <button onclick="shareBugoKakao()" style="display:flex;align-items:center;gap:8px;padding:14px 24px;background:#FEE500;color:#000;border:none;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.15);">
-      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" style="width:20px;height:20px;">
-      카카오 공유
+  <div style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;display:flex;gap:10px;white-space:nowrap;">
+    <button onclick="shareBugoKakao()" style="display:flex;align-items:center;gap:6px;padding:11px 20px;background:#FEE500;color:#000;border:none;font-size:13px;font-weight:700;letter-spacing:0.5px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border-radius:50px;box-shadow:0 4px 14px rgba(0,0,0,0.13);">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.03 2 11c0 2.84 1.38 5.37 3.56 7.1L4.5 22l4.2-2.1C9.7 20.27 10.83 20.5 12 20.5c5.52 0 10-4.03 10-9S17.52 2 12 2z" fill="#000"/></svg>
+      공유하기
     </button>
-    <a href="#" id="flowerBtn" style="display:flex;align-items:center;gap:8px;padding:14px 24px;background:var(--accent);color:var(--paper);border:none;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.15);text-decoration:none;">
+    <a href="#" id="flowerBtn" style="display:flex;align-items:center;gap:6px;padding:11px 20px;background:var(--accent);color:var(--paper);border:none;font-size:13px;font-weight:700;letter-spacing:0.5px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border-radius:50px;box-shadow:0 4px 14px rgba(0,0,0,0.13);text-decoration:none;">
       🌸 근조화환
     </a>
   </div>
@@ -697,21 +697,11 @@ function shareBugoKakao() {
 </script>
 <!-- 조각필름 카카오톡 플로팅 버튼 -->
 <a href="https://pf.kakao.com/_DxixgxlX" target="_blank" rel="noopener"
-  style="position:fixed;bottom:90px;right:20px;z-index:9999;display:flex;align-items:center;gap:8px;background:#FEE500;color:#3C1E1E;padding:12px 18px 12px 14px;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.18);text-decoration:none;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.5px;transition:transform 0.2s,box-shadow 0.2s;"
+  style="position:fixed;bottom:24px;right:20px;z-index:9999;display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:#FEE500;border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.18);text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;"
   onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.22)'"
-  onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.18)'">
-  <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="12" cy="11" rx="10" ry="8.5" fill="#3C1E1E"/>
-    <path d="M6 16.5 L4.5 20 L9 17.5" fill="#3C1E1E"/>
-    <ellipse cx="12" cy="11" rx="8" ry="6.5" fill="#FEE500"/>
-    <rect x="7" y="9.5" width="2" height="4" rx="1" fill="#3C1E1E"/>
-    <rect x="11" y="9.5" width="2" height="4" rx="1" fill="#3C1E1E"/>
-    <rect x="15" y="9.5" width="2" height="4" rx="1" fill="#3C1E1E"/>
-  </svg>
-  <span style="display:flex;flex-direction:column;line-height:1.2;">
-    <span style="font-size:10px;font-weight:500;opacity:0.7;">추모영상 문의</span>
-    <span>조각필름 카톡</span>
-  </span>
+  onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(0,0,0,0.18)'"
+  title="추모영상 문의 - 조각필름">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.03 2 11c0 2.84 1.38 5.37 3.56 7.1L4.5 22l4.2-2.1C9.7 20.27 10.83 20.5 12 20.5c5.52 0 10-4.03 10-9S17.52 2 12 2z" fill="#3C1E1E"/></svg>
 </a>
 </body>
 </html>
