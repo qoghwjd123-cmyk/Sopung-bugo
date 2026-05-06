@@ -594,8 +594,10 @@ async function loadBugo() {
       document.getElementById('flowerBtn').style.display = 'none';
     } else {
       const hall = data.funeral?.hall || '';
-      const searchQuery = encodeURIComponent((hall ? hall + ' ' : '') + '근조화환');
-      document.getElementById('flowerBtn').href = 'https://search.naver.com/search.naver?query=' + searchQuery;
+      const address = data.funeral?.address || '';
+      const deceased = data.deceased?.name || '';
+      const params = new URLSearchParams({ hall, address, deceased });
+      document.getElementById('flowerBtn').href = '/flower.html?' + params.toString();
       document.getElementById('flowerBtn').target = '_blank';
     }
     document.getElementById('recordBtn').style.display = 'none';
