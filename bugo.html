@@ -437,16 +437,19 @@
 
   <!-- 액션 버튼 -->
   <div class="action-buttons" id="actionButtons">
-    <a href="#" class="btn-flower" id="flowerBtn">🌸 근조화환 보내기</a>
+    <a href="#" class="btn-flower" id="flowerBtnOld" style="display:none;">🌸 근조화환 보내기</a>
     <a href="#" class="btn-record" id="recordBtn">📋 조의금 기록장</a>
   </div>
 
-  <!-- 하단 카카오 공유 플로팅 버튼 -->
-  <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:100;">
-    <button onclick="shareBugoKakao()" style="display:flex;align-items:center;gap:8px;padding:14px 28px;background:#FEE500;color:#000;border:none;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.15);white-space:nowrap;">
+  <!-- 하단 플로팅 버튼 2개 -->
+  <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:100;display:flex;gap:12px;white-space:nowrap;">
+    <button onclick="shareBugoKakao()" style="display:flex;align-items:center;gap:8px;padding:14px 24px;background:#FEE500;color:#000;border:none;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.15);">
       <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" style="width:20px;height:20px;">
-      카카오톡으로 공유하기
+      카카오 공유
     </button>
+    <a href="#" id="flowerBtn" style="display:flex;align-items:center;gap:8px;padding:14px 24px;background:var(--accent);color:var(--paper);border:none;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.15);text-decoration:none;">
+      🌸 근조화환
+    </a>
   </div>
   <div style="height:80px;"></div>
 
