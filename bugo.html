@@ -441,9 +441,9 @@
     <a href="#" class="btn-record" id="recordBtn">📋 조의금 기록장</a>
   </div>
 
-  <!-- 하단 고정 공유 버튼 -->
-  <div style="position:fixed;bottom:0;left:0;right:0;background:rgba(245,240,232,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:12px 20px;z-index:100;">
-    <button onclick="shareBugoKakao()" style="width:100%;padding:14px;background:#FEE500;color:#000;border:none;font-size:14px;font-weight:600;letter-spacing:1px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border-radius:4px;display:flex;align-items:center;justify-content:center;gap:8px;">
+  <!-- 하단 카카오 공유 플로팅 버튼 -->
+  <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:100;">
+    <button onclick="shareBugoKakao()" style="display:flex;align-items:center;gap:8px;padding:14px 28px;background:#FEE500;color:#000;border:none;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.15);white-space:nowrap;">
       <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" style="width:20px;height:20px;">
       카카오톡으로 공유하기
     </button>
