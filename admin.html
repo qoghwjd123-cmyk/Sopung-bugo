@@ -411,5 +411,23 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 </script>
+<!-- 조각필름 카카오톡 플로팅 버튼 -->
+<a href="https://pf.kakao.com/_DxixgxlX" target="_blank" rel="noopener"
+  style="position:fixed;bottom:28px;right:20px;z-index:9999;display:flex;align-items:center;gap:8px;background:#FEE500;color:#3C1E1E;padding:12px 18px 12px 14px;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.18);text-decoration:none;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.5px;transition:transform 0.2s,box-shadow 0.2s;"
+  onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.22)'"
+  onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.18)'">
+  <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="12" cy="11" rx="10" ry="8.5" fill="#3C1E1E"/>
+    <path d="M6 16.5 L4.5 20 L9 17.5" fill="#3C1E1E"/>
+    <ellipse cx="12" cy="11" rx="8" ry="6.5" fill="#FEE500"/>
+    <rect x="7" y="9.5" width="2" height="4" rx="1" fill="#3C1E1E"/>
+    <rect x="11" y="9.5" width="2" height="4" rx="1" fill="#3C1E1E"/>
+    <rect x="15" y="9.5" width="2" height="4" rx="1" fill="#3C1E1E"/>
+  </svg>
+  <span style="display:flex;flex-direction:column;line-height:1.2;">
+    <span style="font-size:10px;font-weight:500;opacity:0.7;">추모영상 문의</span>
+    <span>조각필름 카톡</span>
+  </span>
+</a>
 </body>
 </html>

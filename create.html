@@ -446,7 +446,7 @@
     </div>
 
     <div class="form-section">
-      <div class="form-section-title">생전 사진 <span style="font-size:10px;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-weight:400;letter-spacing:0;">(선택 · 최대 9장)</span></div>
+      <div class="form-section-title">생전 사진 <span style="font-size:10px;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-weight:400;letter-spacing:0;">(선택 · 최대 20장)</span></div>
 
       <div class="photo-upload-area" id="photoDropArea" onclick="triggerPhotoInput()">
         <input type="file" id="photoFileInput" accept="image/*" multiple style="display:none;" onchange="handlePhotoSelect(event)">
@@ -455,7 +455,7 @@
         <div class="photo-upload-sub">
           사진을 올리시면 부고장에 <strong>포토슬라이드</strong>로 표시됩니다 <em>(무료)</em><br>
           조문객분들께 생전 모습을 보여드릴 수 있어요<br>
-          <span style="color:var(--muted);font-size:11px;">사진을 최대한 많이 모아두시면 나중에 <strong>추모 영상</strong>으로 제작해 드릴 수 있어요</span>
+          <span style="color:var(--muted);font-size:11px;">사진을 최대한 많이 모아두시면 <strong>조각필름</strong>에서 아름다운 <strong>추모 영상</strong>으로 제작해 드릴 수 있어요</span>
         </div>
       </div>
 
@@ -732,7 +732,7 @@ let accountCount = 0;
 let opts = { record: true, flower: false };
 let funeralId = null;
 let selectedPhotos = []; // { file, previewUrl }
-const MAX_PHOTOS = 9;
+const MAX_PHOTOS = 20;
 
 // ── 단계 이동 ──
 window.goStep = function goStep(n) {
@@ -806,6 +806,12 @@ window.addSangju = function addSangju() {
         </select>
       </div>
     </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>연락처 <span style="font-size:10px;color:var(--muted)">(선택)</span></label>
+        <input type="tel" id="sanguPhone${n}" placeholder="010-0000-0000" inputmode="numeric" maxlength="13" oninput="formatPhone(this)">
+      </div>
+    </div>
     <div class="form-row col2">
       <div class="form-group">
         <label>은행 <span style="font-size:10px;color:var(--muted)">(선택)</span></label>
@@ -819,7 +825,7 @@ window.addSangju = function addSangju() {
       </div>
       <div class="form-group">
         <label>계좌번호 <span style="font-size:10px;color:var(--muted)">(선택)</span></label>
-        <input type="text" id="sanguAccount${n}" placeholder="계좌번호 입력" inputmode="numeric" pattern="[0-9]*" id="sanguAccountInput${n}">
+        <input type="text" id="sanguAccount${n}" placeholder="계좌번호 입력" inputmode="numeric" pattern="[0-9]*">
       </div>
     </div>
   `;
@@ -1213,10 +1219,11 @@ window.goStep4 = async function() {
   for (let i = 1; i <= sanguCount; i++) {
     const sName = document.getElementById('sanguName' + i)?.value;
     const sRel = document.getElementById('sanguRel' + i)?.value;
+    const sPhone = document.getElementById('sanguPhone' + i)?.value || '';
     const sBank = document.getElementById('sanguBank' + i)?.value;
     const sBankOther = document.getElementById('sanguBankOther' + i)?.value;
     const sAccount = document.getElementById('sanguAccount' + i)?.value;
-    if (sName) sanguList.push({ name: sName, rel: sRel || '', bank: sBank === '기타' ? (sBankOther||'') : (sBank||''), account: sAccount || '' });
+    if (sName) sanguList.push({ name: sName, rel: sRel || '', phone: sPhone, bank: sBank === '기타' ? (sBankOther||'') : (sBank||''), account: sAccount || '' });
   }
 
   // 버튼 비활성화
@@ -1311,6 +1318,13 @@ function searchPlace() {
   });
 }
 
+function formatPhone(input) {
+  let v = input.value.replace(/\D/g, '');
+  if (v.length <= 3) input.value = v;
+  else if (v.length <= 7) input.value = v.slice(0,3) + '-' + v.slice(3);
+  else input.value = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7,11);
+}
+
 function toggleAccountInput(n) {
   var bank = document.getElementById("sanguBank" + n).value;
   var input = document.getElementById("sanguAccount" + n);
@@ -1333,5 +1347,23 @@ function selectPlace(i) {
   document.getElementById("placeList").style.display = "none";
 }
 </script>
+<!-- 조각필름 카카오톡 플로팅 버튼 -->
+<a href="https://pf.kakao.com/_DxixgxlX" target="_blank" rel="noopener"
+  style="position:fixed;bottom:28px;right:20px;z-index:9999;display:flex;align-items:center;gap:8px;background:#FEE500;color:#3C1E1E;padding:12px 18px 12px 14px;border-radius:50px;box-shadow:0 4px 16px rgba(0,0,0,0.18);text-decoration:none;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.5px;transition:transform 0.2s,box-shadow 0.2s;"
+  onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.22)'"
+  onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.18)'">
+  <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="12" cy="11" rx="10" ry="8.5" fill="#3C1E1E"/>
+    <path d="M6 16.5 L4.5 20 L9 17.5" fill="#3C1E1E"/>
+    <ellipse cx="12" cy="11" rx="8" ry="6.5" fill="#FEE500"/>
+    <rect x="7" y="9.5" width="2" height="4" rx="1" fill="#3C1E1E"/>
+    <rect x="11" y="9.5" width="2" height="4" rx="1" fill="#3C1E1E"/>
+    <rect x="15" y="9.5" width="2" height="4" rx="1" fill="#3C1E1E"/>
+  </svg>
+  <span style="display:flex;flex-direction:column;line-height:1.2;">
+    <span style="font-size:10px;font-weight:500;opacity:0.7;">추모영상 문의</span>
+    <span>조각필름 카톡</span>
+  </span>
+</a>
 </body>
 </html>
