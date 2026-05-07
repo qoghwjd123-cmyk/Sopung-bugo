@@ -194,6 +194,10 @@
       <input type="text" id="hallName" readonly style="background:var(--cream);color:var(--accent);cursor:default;">
     </div>
     <div class="form-row">
+      <label>호실</label>
+      <input type="text" id="hallRoom" readonly style="background:var(--cream);color:var(--accent);cursor:default;">
+    </div>
+    <div class="form-row">
       <label>장례식장 주소</label>
       <input type="text" id="hallAddress" readonly style="background:var(--cream);color:var(--accent);cursor:default;">
     </div>
@@ -288,6 +292,7 @@ async function requestPayment() {
   if (!selectedProduct) { showToast('상품을 선택해주세요'); return; }
   const hall = document.getElementById('hallName').value.trim();
   const address = document.getElementById('hallAddress').value.trim();
+  const room = document.getElementById('hallRoom').value.trim();
   const deceased = document.getElementById('deceaseeName').value.trim();
   const phone = document.getElementById('phone').value.trim();
   const sender = document.getElementById('senderName').value.trim();
@@ -310,6 +315,7 @@ async function requestPayment() {
   const orderMemo = [
     `상품: ${selectedProduct.name}`,
     `장례식장: ${hall}`,
+    room ? `호실: ${room}` : '',
     `주소: ${address}`,
     `고인: ${deceased}`,
     ribbon ? `리본문구: ${ribbon}` : '',
@@ -342,6 +348,7 @@ function showToast(msg) {
 const params = new URLSearchParams(window.location.search);
 if (params.get('hall')) document.getElementById('hallName').value = params.get('hall');
 if (params.get('address')) document.getElementById('hallAddress').value = params.get('address');
+if (params.get('room')) document.getElementById('hallRoom').value = params.get('room');
 if (params.get('deceased')) document.getElementById('deceaseeName').value = params.get('deceased');
 </script>
 </body>

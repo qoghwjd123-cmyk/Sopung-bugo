@@ -404,6 +404,7 @@
     <span class="section-label">장 례 식 장</span>
     <div class="funeral-hall" id="funeralHall"></div>
     <div class="funeral-address" id="funeralAddress"></div>
+    <div class="funeral-address" id="funeralRoom" style="color:var(--accent);font-size:13px;margin-top:2px;"></div>
     <div class="funeral-dates">
       <div class="funeral-date-item" id="funeralDateRow">
         <span class="date-label">발인</span>
@@ -535,6 +536,10 @@ async function loadBugo() {
     // 장례식장
     document.getElementById('funeralHall').textContent = f.hall;
     if (f.address) document.getElementById('funeralAddress').textContent = f.address;
+    if (f.room) {
+      const roomEl = document.getElementById('funeralRoom');
+      if (roomEl) roomEl.textContent = f.room;
+    }
 
     // 샘플 부고장은 발인 날짜를 오늘+2일로 동적 설정
     const isSample = new URLSearchParams(window.location.search).get('id') === 'bugo_sample';
@@ -609,7 +614,8 @@ async function loadBugo() {
       const hall = data.funeral?.hall || '';
       const address = data.funeral?.address || '';
       const deceased = data.deceased?.name || '';
-      const params = new URLSearchParams({ hall, address, deceased });
+      const room = data.funeral?.room || '';
+      const params = new URLSearchParams({ hall, address, room, deceased });
       document.getElementById('flowerBtn').href = '/flower.html?' + params.toString();
       document.getElementById('flowerBtn').target = '_blank';
     }
