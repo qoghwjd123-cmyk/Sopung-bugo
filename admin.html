@@ -316,17 +316,22 @@ function makeCard(b) {
   const photos = b.photos?.length || 0;
   const phone = b.contactPhone || '';
   const funeralDate = formatDate(b.funeral?.date);
+  const isCondo = b.type === 'condolence_only';
   return `
-    <div class="bugo-card">
+    <div class="bugo-card" style="${isCondo ? 'border-color:rgba(100,150,255,0.3);' : ''}">
+      ${isCondo ? '<div style="font-size:10px;letter-spacing:2px;color:#6495ed;margin-bottom:6px;font-family:\'Noto Serif KR\',serif;">📋 조의금 기록장</div>' : ''}
       <div class="card-name">故 ${b.deceased?.name || '—'} 님</div>
-      <div class="card-hall">${b.funeral?.hall || '장례식장 미입력'}</div>
+      <div class="card-hall">${isCondo ? '부고장 없음' : (b.funeral?.hall || '장례식장 미입력')}</div>
       <div class="card-meta">
         ${photos > 0 ? `<span class="meta-tag photo">📷 ${photos}장</span>` : '<span class="meta-tag">사진 없음</span>'}
         ${phone ? `<span class="meta-tag phone">📞 ${phone}</span>` : '<span class="meta-tag no-phone">연락처 없음</span>'}
       </div>
-      <div class="card-date">발인 ${funeralDate}</div>
+      <div class="card-date">발인 ${isCondo ? '—' : funeralDate}</div>
       <div class="card-btns">
-        <a href="/bugo.html?id=${b.id}" target="_blank" class="card-btn btn-view">부고장</a>
+        ${isCondo
+          ? `<a href="/condolence.html?id=${b.id}" target="_blank" class="card-btn btn-view" style="background:#6495ed;">조의금 기록장</a>`
+          : `<a href="/bugo.html?id=${b.id}" target="_blank" class="card-btn btn-view">부고장</a>`
+        }
         <a href="/manage.html?id=${b.id}" target="_blank" class="card-btn btn-manage">관리</a>
         <button class="card-btn" onclick="deleteBugo('${b.id}', '${b.deceased?.name}')" style="background:transparent;color:#ef4444;border:1px solid rgba(239,68,68,0.3);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:10px;letter-spacing:1px;padding:7px;flex:0 0 36px;">🗑</button>
       </div>
