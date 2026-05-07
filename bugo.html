@@ -528,7 +528,7 @@ async function loadBugo() {
     if (d.age) info += ' · 향년 ' + d.age + '세';
     if (d.date) {
       const [y,m,dd] = d.date.split('-');
-      info += ' · ' + y + '년 ' + parseInt(m) + '월 ' + parseInt(dd) + '일 별세';
+      info += ' · ' + y + '년 ' + parseInt(m) + '월 ' + parseInt(dd) + '일 ' + (data.deceased?.deathTerm || '별세');
     }
     if (d.title) info += ' · ' + d.title;
     document.getElementById('bugoInfo').textContent = info;

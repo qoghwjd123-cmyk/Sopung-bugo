@@ -438,6 +438,20 @@
       </div>
       <div class="form-row">
         <div class="form-group">
+          <label>임종 용어 <span style="font-size:10px;color:var(--muted)">(선택)</span></label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
+            <button type="button" class="death-term-btn active" onclick="selectDeathTerm(this,'별세')" style="padding:8px 14px;font-size:13px;border:1px solid var(--gold);background:var(--accent);color:var(--white);font-family:'Noto Serif KR',serif;cursor:pointer;letter-spacing:1px;">별세</button>
+            <button type="button" class="death-term-btn" onclick="selectDeathTerm(this,'소천')" style="padding:8px 14px;font-size:13px;border:1px solid var(--line);background:var(--white);color:var(--accent);font-family:'Noto Serif KR',serif;cursor:pointer;letter-spacing:1px;">소천</button>
+            <button type="button" class="death-term-btn" onclick="selectDeathTerm(this,'선종')" style="padding:8px 14px;font-size:13px;border:1px solid var(--line);background:var(--white);color:var(--accent);font-family:'Noto Serif KR',serif;cursor:pointer;letter-spacing:1px;">선종</button>
+            <button type="button" class="death-term-btn" onclick="selectDeathTerm(this,'입적')" style="padding:8px 14px;font-size:13px;border:1px solid var(--line);background:var(--white);color:var(--accent);font-family:'Noto Serif KR',serif;cursor:pointer;letter-spacing:1px;">입적</button>
+            <button type="button" class="death-term-btn" onclick="selectDeathTerm(this,'열반')" style="padding:8px 14px;font-size:13px;border:1px solid var(--line);background:var(--white);color:var(--accent);font-family:'Noto Serif KR',serif;cursor:pointer;letter-spacing:1px;">열반</button>
+            <button type="button" class="death-term-btn" onclick="selectDeathTerm(this,'영면')" style="padding:8px 14px;font-size:13px;border:1px solid var(--line);background:var(--white);color:var(--accent);font-family:'Noto Serif KR',serif;cursor:pointer;letter-spacing:1px;">영면</button>
+          </div>
+          <input type="hidden" id="deathTerm" value="별세">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
           <label>직함 <span style="font-size:10px;color:var(--muted)">(선택)</span></label>
           <input type="text" id="deceasedTitle" placeholder="예) 前 OO회사 대표이사">
           <span class="hint">고인의 경력이나 직함 (부고장에 표시됩니다)</span>
@@ -986,7 +1000,7 @@ window.renderPreview = function renderPreview() {
   if (age) infoText += ' · 향년 ' + age + '세';
   if (dateVal) {
     const [y,m,d] = dateVal.split('-');
-    infoText += ' · ' + y + '년 ' + parseInt(m) + '월 ' + parseInt(d) + '일 별세';
+    infoText += ' · ' + y + '년 ' + parseInt(m) + '월 ' + parseInt(d) + '일 ' + (document.getElementById('deathTerm')?.value || '별세');
   }
   if (title) infoText += ' · ' + title;
   document.getElementById('prev-info').textContent = infoText;
@@ -1273,7 +1287,7 @@ window.goStep4 = async function() {
 
     await setDoc(doc(db, 'bugos', funeralId), {
       id: funeralId, password: pw,
-      deceased: { name, age, date: dateVal, title, gender },
+      deceased: { name, age, date: dateVal, title, gender, deathTerm: document.getElementById('deathTerm')?.value || '별세' },
       funeral: { hall, address, room, date: funeralDateVal, burial },
       sangju: sanguList,
       photos: photoUrls,
@@ -1355,6 +1369,18 @@ function searchPlace() {
       list.appendChild(div);
     });
   });
+}
+
+function selectDeathTerm(el, term) {
+  document.querySelectorAll('.death-term-btn').forEach(b => {
+    b.style.background = 'var(--white)';
+    b.style.color = 'var(--accent)';
+    b.style.borderColor = 'var(--line)';
+  });
+  el.style.background = 'var(--accent)';
+  el.style.color = 'var(--white)';
+  el.style.borderColor = 'var(--gold)';
+  document.getElementById('deathTerm').value = term;
 }
 
 function formatPhone(input) {
