@@ -1351,7 +1351,7 @@ function searchPlace() {
       div.innerHTML = "<div style='color:#4a4035;font-weight:500;'>" + p.place_name + "</div><div style='color:#8a8478;font-size:11px;margin-top:2px;'>" + (p.road_address_name || p.address_name) + "</div>";
       div.addEventListener("mouseover", function() { this.style.background = "#ede8dc"; });
       div.addEventListener("mouseout", function() { this.style.background = ""; });
-      div.addEventListener("click", function() { selectPlace(i); });
+      div.addEventListener("mousedown", function(e) { e.preventDefault(); selectPlace(i); });
       list.appendChild(div);
     });
   });
