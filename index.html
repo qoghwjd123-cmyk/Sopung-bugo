@@ -560,6 +560,7 @@
     .cta { padding: 80px 24px; }
     footer { padding: 32px 20px; flex-direction: column; text-align: center; }
     .step { grid-template-columns: 50px 1fr; gap: 20px; }
+    .guide-grid { grid-template-columns: repeat(2,1fr) !important; }
   }
 </style>
 </head>
@@ -572,6 +573,7 @@
     <a href="#features">서비스 소개</a>
     <a href="#how">이용 방법</a>
     <a href="#services">시작하기</a>
+    <a href="/faq.html">장례 가이드</a>
     <button onclick="toggleFindBox()" style="background:var(--accent);color:var(--white);border:none;padding:8px 16px;font-size:12px;letter-spacing:2px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">내 부고장 찾기</button>
   </nav>
 </header>
@@ -787,6 +789,43 @@
       <p class="service-desc">받으신 조의금을 실시간으로 기록하고 관리하세요. 엑셀 내보내기로 장례 후 정산도 간편하게.</p>
       <span class="service-arrow">→</span>
     </a>
+  </div>
+</section>
+
+<!-- GUIDE -->
+<section style="padding:60px 40px;background:var(--cream);border-top:1px solid var(--line);">
+  <div style="max-width:860px;margin:0 auto;">
+    <div class="section-header">
+      <span class="section-label">FUNERAL GUIDE</span>
+      <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+      <h2 class="section-title">장례 예절 가이드</h2>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px;letter-spacing:0.5px;line-height:1.8;">갑작스러운 부고에도 당황하지 않도록,<br>꼭 알아야 할 장례 예절을 정리했습니다.</p>
+    </div>
+    <div class="guide-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:32px;">
+      <a href="/faq-condolence.html" style="background:var(--white);border:1px solid var(--line);padding:22px 18px;text-decoration:none;display:block;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--line)'">
+        <div style="font-size:10px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;font-family:'Noto Serif KR',serif;">GUIDE 01</div>
+        <div style="font-family:'Noto Serif KR',serif;font-size:14px;color:var(--accent);margin-bottom:8px;line-height:1.5;">조문 방법과 예절</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.7;">순서·분향·절하는 법·위로의 말</div>
+      </a>
+      <a href="/faq-money.html" style="background:var(--white);border:1px solid var(--line);padding:22px 18px;text-decoration:none;display:block;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--line)'">
+        <div style="font-size:10px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;font-family:'Noto Serif KR',serif;">GUIDE 02</div>
+        <div style="font-family:'Noto Serif KR',serif;font-size:14px;color:var(--accent);margin-bottom:8px;line-height:1.5;">조의금 얼마가 적당할까</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.7;">관계별 금액·봉투 쓰는 법</div>
+      </a>
+      <a href="/faq-message.html" style="background:var(--white);border:1px solid var(--line);padding:22px 18px;text-decoration:none;display:block;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--line)'">
+        <div style="font-size:10px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;font-family:'Noto Serif KR',serif;">GUIDE 03</div>
+        <div style="font-family:'Noto Serif KR',serif;font-size:14px;color:var(--accent);margin-bottom:8px;line-height:1.5;">부고 문자 쓰는 법</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.7;">필수 내용·디지털 부고장 활용</div>
+      </a>
+      <a href="/faq-dress.html" style="background:var(--white);border:1px solid var(--line);padding:22px 18px;text-decoration:none;display:block;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--line)'">
+        <div style="font-size:10px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;font-family:'Noto Serif KR',serif;">GUIDE 04</div>
+        <div style="font-family:'Noto Serif KR',serif;font-size:14px;color:var(--accent);margin-bottom:8px;line-height:1.5;">장례식 복장 가이드</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.7;">남성·여성 복장·급할 때 대처</div>
+      </a>
+    </div>
+    <div style="text-align:center;margin-top:24px;">
+      <a href="/faq.html" style="font-size:12px;color:var(--muted);letter-spacing:2px;text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px;">가이드 전체 보기 →</a>
+    </div>
   </div>
 </section>
 
