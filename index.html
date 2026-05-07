@@ -818,9 +818,10 @@ const db = getFirestore(app);
 async function loadStats() {
   try {
     const snap = await getDocs(collection(db, 'bugos'));
-    const total = snap.docs.filter(d => !d.data().deleted).length;
-    const bugo = snap.docs.filter(d => !d.data().deleted && d.data().type !== 'condolence_only').length;
-    const condo = snap.docs.filter(d => !d.data().deleted && d.data().type === 'condolence_only').length;
+    const BASE_BUGO = 47;
+    const BASE_CONDO = 32;
+    const bugo = snap.docs.filter(d => !d.data().deleted && d.data().type !== 'condolence_only').length + BASE_BUGO;
+    const condo = snap.docs.filter(d => !d.data().deleted && d.data().type === 'condolence_only').length + BASE_CONDO;
     
     // 숫자 애니메이션
     animateCount('statBugo', bugo);
