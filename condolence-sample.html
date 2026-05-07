@@ -415,58 +415,78 @@
 
 
 <script>
-// 샘플 데이터
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function formatMoney(n) {
+  return Number(n||0).toLocaleString();
+}
+function formatDateTime(date, time) {
+  if (!date) return '';
+  const d = date.replace(/^\d{4}-/, '').replace('-', '/');
+  return time ? d + ' ' + time : d;
+}
+
+
 let entries = [
-  { id:'s1', name:'김철수', relation:'친구', amount:50000, date:'2026-05-07', time:'09:15' },
-  { id:'s2', name:'이영희', relation:'직장동료', amount:100000, date:'2026-05-07', time:'09:42' },
-  { id:'s3', name:'박민준', relation:'친척', amount:50000, date:'2026-05-07', time:'10:10' },
-  { id:'s4', name:'정수연', relation:'이웃', amount:30000, date:'2026-05-07', time:'10:38' },
-  { id:'s5', name:'최지훈', relation:'친구', amount:100000, date:'2026-05-07', time:'11:05' },
-  { id:'s6', name:'홍소풍', relation:'직장동료', amount:50000, date:'2026-05-07', time:'11:22' },
-  { id:'s7', name:'강다영', relation:'학교동문', amount:50000, date:'2026-05-07', time:'12:00' },
-  { id:'s8', name:'윤성민', relation:'친구', amount:100000, date:'2026-05-07', time:'13:15' },
+  { id:'s1', name:'김철수', relation:'친구', amount:50000, date:'2026-05-07', time:'오전 09:15' },
+  { id:'s2', name:'이영희', relation:'직장동료', amount:100000, date:'2026-05-07', time:'오전 09:42' },
+  { id:'s3', name:'박민준', relation:'친척', amount:50000, date:'2026-05-07', time:'오전 10:10' },
+  { id:'s4', name:'정수연', relation:'이웃', amount:30000, date:'2026-05-07', time:'오전 10:38' },
+  { id:'s5', name:'최지훈', relation:'친구', amount:100000, date:'2026-05-07', time:'오전 11:05' },
+  { id:'s6', name:'홍소풍', relation:'직장동료', amount:50000, date:'2026-05-07', time:'오전 11:22' },
+  { id:'s7', name:'강다영', relation:'학교동문', amount:50000, date:'2026-05-07', time:'오후 12:00' },
+  { id:'s8', name:'윤성민', relation:'친구', amount:100000, date:'2026-05-07', time:'오후 01:15' },
 ];
 let expenses = [];
 let isAdmin = false;
 
-// 로딩화면 바로 제거
 window.addEventListener('DOMContentLoaded', () => {
   const ls = document.getElementById('loadingScreen');
   ls.classList.add('hide');
   setTimeout(() => ls.style.display='none', 400);
-  renderList();
   updateSummary();
+  renderList();
   document.getElementById('tabBadge').textContent = entries.length;
+  switchTab('list');
 });
 
 function updateSummary() {
   const total = entries.length;
   const amt = entries.reduce((s,e) => s + (e.amount||0), 0);
-  const exp = expenses.reduce((s,e) => s + (e.amount||0), 0);
+  const exp = 0;
   document.getElementById('totalCount').textContent = total + '명';
-  document.getElementById('totalAmount').textContent = amt.toLocaleString() + '원';
-  document.getElementById('totalExpense').textContent = exp.toLocaleString() + '원';
-  document.getElementById('balanceAmount').textContent = (amt - exp).toLocaleString() + '원';
+  document.getElementById('totalAmount').textContent = formatMoney(amt) + '원';
+  document.getElementById('totalExpense').textContent = formatMoney(exp) + '원';
+  document.getElementById('balanceAmount').textContent = formatMoney(amt - exp) + '원';
 }
 
-function renderList() {
-  const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
-  const filtered = q ? entries.filter(e => e.name.includes(q) || (e.relation||'').includes(q)) : entries;
+window.renderList = function() {
+  const q2 = document.getElementById('searchInput').value.trim().toLowerCase();
+  const filtered = entries.filter(e =>
+    e.name?.toLowerCase().includes(q2) || (e.relation && e.relation.includes(q2))
+  );
   document.getElementById('filteredCount').textContent = filtered.length + '명';
   const el = document.getElementById('entryList');
-  if (!filtered.length) { el.innerHTML = '<div class="list-empty">조문객이 없습니다</div>'; return; }
-  el.innerHTML = filtered.map((e,i) => `
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="list-empty">아직 기록된 분이 없습니다</div>';
+    el.className = ''; return;
+  }
+  el.className = '';
+  el.innerHTML = filtered.map((e, i) => `
     <div class="entry-card">
-      <div class="entry-num">${entries.length - i}</div>
-      <div class="entry-info">
-        <span class="entry-name">${e.name}</span>
-        <span class="entry-relation">${e.relation || ''}</span>
+      <div class="entry-index">${String(filtered.length - i).padStart(2,'0')}</div>
+      <div class="entry-main">
+        <div class="entry-name">${escHtml(e.name)}</div>
+        <div class="entry-meta">
+          ${e.relation ? `<span class="entry-relation">${escHtml(e.relation)}</span>` : ''}
+          ${e.amount ? `<span class="entry-amount">${formatMoney(e.amount)}원</span>` : `<span class="entry-amount-empty">금액 미입력</span>`}
+          <span style="font-size:11px;color:var(--muted)">${formatDateTime(e.date, e.time)}</span>
+        </div>
       </div>
-      <div class="entry-amount">${e.amount ? e.amount.toLocaleString()+'원' : '—'}</div>
-      <div class="entry-date">${e.date} ${e.time}</div>
-    </div>
-  `).join('');
-}
+    </div>`).join('');
+};
 
 window.switchTab = function(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
