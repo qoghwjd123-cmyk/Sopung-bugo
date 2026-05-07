@@ -440,6 +440,9 @@ if (!bugoId) {
   throw new Error('No bugoId');
 }
 
+// 샘플 모드
+const isSample = bugoId === 'condo_sample';
+
 // 부고장별 컬렉션
 const colRef = collection(db, "bugos", bugoId, "condolences");
 
@@ -451,6 +454,25 @@ getDoc(doc(db, 'bugos', bugoId)).then(snap => {
 
 let isAdmin = false;
 let entries = [];
+
+if (isSample) {
+  // 샘플 데이터 하드코딩
+  ADMIN_PW = '0000';
+  entries = [
+    { id: 's1', name: '김철수', relation: '친구', amount: 50000, createdAt: '2026-05-01T10:00:00Z' },
+    { id: 's2', name: '이영희', relation: '직장동료', amount: 100000, createdAt: '2026-05-01T11:00:00Z' },
+    { id: 's3', name: '박민준', relation: '친척', amount: 50000, createdAt: '2026-05-01T12:00:00Z' },
+    { id: 's4', name: '정수연', relation: '이웃', amount: 30000, createdAt: '2026-05-01T13:00:00Z' },
+    { id: 's5', name: '최지훈', relation: '친구', amount: 100000, createdAt: '2026-05-01T14:00:00Z' },
+    { id: 's6', name: '홍소풍', relation: '직장동료', amount: 50000, createdAt: '2026-05-01T15:00:00Z' },
+  ];
+  renderList();
+  updateSummary();
+  document.getElementById('tabBadge').textContent = entries.length;
+  const ls = document.getElementById('loadingScreen');
+  ls.classList.add('hide');
+  setTimeout(() => ls.style.display = 'none', 400);
+} else {
 
 // 실시간 수신
 const q = query(colRef, orderBy("createdAt", "desc"));
@@ -476,6 +498,8 @@ onSnapshot(expenseQ, (snapshot) => {
   updateSummary();
 });
 
+} // end if(!isSample)
+
 // 탭 전환
 window.switchTab = function(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -487,6 +511,7 @@ window.switchTab = function(tab) {
 
 // 추가
 window.addEntry = async function() {
+  if (isSample) { showToast('샘플에서는 기록이 불가합니다'); return; }
   const name = document.getElementById('inputName').value.trim();
   if (!name) { showToast('성함을 입력해 주세요'); return; }
   const btn = document.getElementById('btnAdd');
@@ -805,6 +830,14 @@ window.addEventListener('scroll', () => {
     <span style="font-size:10px;font-weight:500;opacity:0.7;">추모영상 문의</span>
     <span>조각필름 카톡</span>
   </span>
+</a>
+<!-- 조각필름 카카오톡 플로팅 버튼 -->
+<a href="https://pf.kakao.com/_DxixgxlX" target="_blank" rel="noopener"
+  style="position:fixed;bottom:32px;right:20px;z-index:9999;display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:var(--white);border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.15);text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;border:1px solid var(--line);"
+  onmouseover="this.style.transform='translateY(-2px)'"
+  onmouseout="this.style.transform=''"
+  title="추모영상 문의 - 조각필름">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.03 2 11c0 2.84 1.38 5.37 3.56 7.1L4.5 22l4.2-2.1C9.7 20.27 10.83 20.5 12 20.5c5.52 0 10-4.03 10-9S17.52 2 12 2z" fill="#b89a5a"/></svg>
 </a>
 </body>
 </html>
