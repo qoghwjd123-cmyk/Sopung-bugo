@@ -449,7 +449,14 @@ window.addEventListener('DOMContentLoaded', () => {
   updateSummary();
   renderList();
   document.getElementById('tabBadge').textContent = entries.length;
-  switchTab('list');
+  switchTab('write');
+
+  // 탭 위 안내 문구 추가
+  const tabBar = document.querySelector('.tab-bar');
+  const hint = document.createElement('div');
+  hint.style.cssText = 'text-align:center;font-size:11px;color:var(--muted);letter-spacing:1px;padding:12px 0 0;font-family:\'Noto Sans KR\',sans-serif;';
+  hint.textContent = '아래 탭을 눌러 기록하기 · 지출 · 방명록을 확인하세요';
+  tabBar.parentNode.insertBefore(hint, tabBar);
 });
 
 function updateSummary() {
