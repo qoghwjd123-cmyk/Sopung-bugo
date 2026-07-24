@@ -784,6 +784,8 @@
       <span class="service-arrow">→</span>
     </a>
     <a href="/condolence-create.html" class="service-card">
+      <span class="service-tag">무료</span>
+      <div class="service-title">조의금<br>기록하기</div>
       <p class="service-desc">받으신 조의금을 실시간으로 기록하고 관리하세요. 엑셀 내보내기로 장례 후 정산도 간편하게.</p>
       <span class="service-arrow">→</span>
     </a>
@@ -873,8 +875,8 @@ async function loadStats() {
     animateCount('statBugo', bugo);
     animateCount('statCondo', condo);
   } catch(e) {
-    document.getElementById('statBugo').textContent = '—';
-    document.getElementById('statCondo').textContent = '—';
+    animateCount('statBugo', 47);
+    animateCount('statCondo', 32);
   }
 }
 
